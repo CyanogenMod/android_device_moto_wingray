@@ -247,6 +247,7 @@ on property:ro.bootmode=bp-tools
     start tcmd
     start gadget-lte-modem
     start gadget-qbp-diag
+    write /proc/sys/net/ipv4/ip_forward 1
 
 on property:ril.moto-qc.port.modem.owner=gadget
     stop ril-daemon
