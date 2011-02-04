@@ -246,9 +246,6 @@ on property:ro.bootmode=qbp-hw-bypass
 on property:ro.bootmode=bp-tools
     start tcmd
     start gadget-lte-modem
-    setprop ril.moto-qc.port.diag.owner "gadget"
-
-on property:ril.moto-qc.port.diag.owner=gadget
     start gadget-qbp-diag
 
 on property:ril.moto-qc.port.modem.owner=gadget
@@ -257,6 +254,7 @@ on property:ril.moto-qc.port.modem.owner=gadget
     start ril-daemon
 
 on property:ril.moto-qc.port.modem.owner=rild
+    stop ril-daemon
     stop gadget-qbp-modem
     start ril-daemon
 
