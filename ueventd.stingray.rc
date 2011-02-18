@@ -18,3 +18,6 @@
 /dev/tegra_rpc	0660	media	media
 /dev/tegra_sema	0660	media	media
 /dev/tegra-crypto	0660	system	system
+/dev/qcqmi0	0640	radio	radio
+/dev/qcqmi1	0640	radio	radio
+/dev/qcqmi2	0640	radio	radio
