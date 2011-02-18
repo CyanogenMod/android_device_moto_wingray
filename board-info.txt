@@ -1,0 +1,4 @@
+require mid=001
+require product=stingray
+require version-bootloader=1035
+require version-baseband=N_02.0F.00R

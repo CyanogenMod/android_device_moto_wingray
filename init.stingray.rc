@@ -1,0 +1,288 @@
+on early-init
+    mount debugfs debugfs /sys/kernel/debug
+
+    export EXTERNAL_STORAGE /mnt/sdcard
+    mkdir /mnt/sdcard 0000 system system
+    # for backwards compatibility
+    symlink /mnt/sdcard /sdcard
+    mkdir /pds 0777 system system
+
+on fs
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/system /system wait ro
+    setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/userdata /data wait noatime nosuid nodev
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/cache /cache wait noatime nosuid nodev
+    mount ext2 /dev/block/platform/sdhci-tegra.3/by-name/pdsb /pds wait ro
+
+on post-fs-data
+    mkdir /data/misc/wifi 0770 wifi wifi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    chown dhcp dhcp /data/misc/dhcp
+    mkdir /data/tpapi 0771 system system
+    mkdir /data/tpapi/etc 0771 system system
+    mkdir /data/tpapi/etc/tpa 0771 system system
+    mkdir /data/tpapi/etc/tpa/persistent 0771 system system
+
+    # cleanup obsolete symlink hack that may be lying around
+    rm /data/misc/ril
+
+    # we will remap this as /mnt/sdcard with the sdcard fuse tool
+    mkdir /data/media 0775 media_rw media_rw
+    chown media_rw media_rw /data/media
+
+    # GPS
+    #Create location directory, BRCM guci library stores LTO file and read/write
+    # config file.
+    mkdir /data/location 0770 radio radio
+
+    # Set indication (checked by vold) that we have finished this action
+    setprop vold.post_fs_data_done 1
+
+on boot
+# bluetooth
+    # power up/down interface
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chmod 0660                /sys/class/rfkill/rfkill0/state
+
+    # UART device
+    chown bluetooth bluetooth /dev/ttyHS2
+    chmod 0660                /dev/ttyHS2
+
+    # bluetooth MAC address programming
+    chown bluetooth bluetooth /sys/module/board_stingray/parameters/bdaddr
+    setprop ro.bt.bdaddr_path /sys/module/board_stingray/parameters/bdaddr
+
+# Sensor
+    chown compass compass /dev/kxtf9
+    chmod 660 /dev/kxtf9
+    chown compass compass /dev/max9635
+    chmod 660 /dev/max9635
+    chown compass compass /dev/bmp085
+    chmod 660 /dev/bmp085
+    chown compass compass /dev/l3g4200d
+    chmod 660 /dev/l3g4200d
+    chown compass compass /dev/akm8975_dev
+    chmod 660 /dev/akm8975_dev
+    chown compass compass /dev/akm8975_aot
+    chmod 660 /dev/akm8975_aot
+
+# light
+    chown system system /sys/class/leds/notification-led/brightness
+    chmod 660 /sys/class/leds/notification-led/brightness
+    chown system system /sys/class/leds/notification-led/blink
+    chmod 660 /sys/class/leds/notification-led/blink
+
+    chmod 666 /dev/nvhost-ctrl
+    chmod 666 /dev/nvhost-display
+    chmod 666 /dev/nvhost-dsi
+    chmod 666 /dev/nvhost-gr2d
+    chmod 666 /dev/nvhost-gr3d
+    chmod 666 /dev/nvhost-isp
+    chmod 666 /dev/nvhost-mpe
+    chmod 666 /dev/nvhost-vi
+
+# Camera
+    chown media camera /sys/class/leds/privacy-led/brightness
+    chown media camera /sys/class/leds/flash/brightness
+    chown media camera /sys/class/leds/torch/brightness
+    chmod 660 /sys/class/leds/privacy-led/brightness
+    chmod 660 /sys/class/leds/flash/brightness
+    chmod 660 /sys/class/leds/torch/brightness
+
+# UART Device
+    chown radio radio /dev/ttyHS4
+    chmod 640 /dev/ttyHS4
+
+# broadcom 4750 device
+    chown radio radio /dev/gps_brcm4750
+    chmod 660 /dev/gps_brcm4750
+
+# Whisper UART Device
+    chown radio radio /dev/ttyHS0
+    chmod 640 /dev/ttyHS0
+
+# Whisper audio settings
+    chown media media /sys/class/switch/dock/dock_prop
+    chmod 660 /sys/class/switch/dock/dock_prop
+
+# Modem Control
+    chown radio radio /sys/class/radio/mdm6600/command
+    chmod 220 /sys/class/radio/mdm6600/command
+    chown radio radio /sys/bus/usb/devices/usb2/power/control
+    chmod 660 /sys/bus/usb/devices/usb2/power/control
+
+# Power Management Settings
+    #write /sys/devices/platform/ohci.0/usb2/2-3/power/level auto
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 80
+    # Wakelock debug
+    write /sys/module/wakelock/parameters/debug_mask 7
+    # No need to continuously scan w1 bus
+    write /sys/devices/w1\ bus\ master/w1_master_search 1
+    # Disable charging LED
+    write /sys/class/gpio/gpio168/value 1
+
+# Ecompass daemon
+service akmd2 /system/bin/akmd2
+    class late_start
+    user compass
+    group compass misc input
+
+service wpa_supplicant /system/bin/wpa_supplicant \
+    -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+#   we will start as root and wpa_supplicant will switch to user wifi
+#   after setting up the capabilities required for WEXT
+#   user wifi
+#   group wifi inet keystore
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+service dhcpcd /system/bin/dhcpcd -ABKL
+    class main
+    disabled
+    oneshot
+
+# bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys.
+# bugtogo.sh tool will invoke bugreport and propt email composer
+# if not in user build.
+service bugreport /system/bin/bugtogo.sh
+    class main
+    disabled
+    oneshot
+    keycodes 115 114
+
+service hciattach /system/bin/brcm_patchram_plus --enable_hci --enable_lpm \
+    --baudrate 3000000 --patchram /etc/firmware/bcm4329.hcd --pcm_role slave \
+    --use_baudrate_for_download /dev/ttyHS2
+    class main
+    user bluetooth
+    group bluetooth net_bt_admin
+    disabled
+
+service location /system/bin/location
+    class late_start
+    socket gpshal_socket stream 660 radio system
+    socket location_shim stream 660 system system
+    socket gps_tcmd stream 660 radio system
+    user radio
+    group radio system mot_accy
+    oneshot
+
+service locDrv /system/bin/brcm_guci_drv -config /system/etc/gpsconfig.xml
+    class late_start
+    user radio
+    group radio inet sdcard_rw
+
+service tcmd /system/bin/tcmd
+    class main
+    oneshot
+    socket local_tcmd stream 0660 root root
+    socket batch_socket stream 0600 root root
+    disabled
+
+service ftmipcd /system/bin/ftmipcd
+    class main
+    oneshot
+    disabled
+
+# Immediately drops to user radio, after starting the real-time thread
+service whisper /system/bin/whisperd
+    class late_start
+    group radio system mot_accy
+
+# create virtual SD card at /mnt/sdcard, based on the /data/media directory
+# daemon will drop to user/group system/media_rw after initializing
+# underlying files in /data/media will be created with user and group media_rw (1023)
+service sdcard /system/bin/sdcard /data/media 1023 1023
+    class late_start
+
+service motolocation /system/bin/sh /system/bin/am startservice -n com.motorola.android.locationproxy/com.motorola.android.locationproxy.LocationProxyService
+    class late_start
+    disabled
+    oneshot
+
+on property:gsm.mot.locatonproxy=start
+    start motolocation
+
+# Get BP version and save to misc
+service savebpver /system/bin/savebpver
+   class main
+   oneshot
+   disabled
+
+on property:dev.bootcomplete=1
+   start savebpver
+
+service gadget-lte-modem /system/bin/tty2ttyd /dev/ttyACM0 /dev/ttyGS0 0 512
+    oneshot
+    disabled
+
+service gadget-qbp-modem /system/bin/tty2ttyd /dev/ttyUSB4 /dev/ttyGS1 0 1024
+    oneshot
+    disabled
+
+service gadget-qbp-diag /system/bin/tty2ttyd /dev/ttyUSB0 /dev/ttyGS2 0 1024
+    oneshot
+    disabled
+
+on property:ro.bootmode=factorycable
+    start tcmd
+    start ftmipcd
+    mount ext2 /dev/block/platform/sdhci-tegra.3/by-name/pdsb /pds wait noatime nosuid nodev remount
+    mkdir /pds/security 0771 system system
+
+on property:ro.bootmode=qbp-hw-bypass
+    setprop ril.moto-qc.usb-hw-bypass.state "on"
+
+on property:ro.bootmode=bp-tools
+    start tcmd
+    start gadget-lte-modem
+    setprop ril.moto-qc.port.diag.owner "gadget"
+
+on property:ril.moto-qc.port.diag.owner=gadget
+    start gadget-qbp-diag
+
+on property:ril.moto-qc.port.modem.owner=gadget
+    stop ril-daemon
+    start gadget-qbp-modem
+    start ril-daemon
+
+on property:ril.moto-qc.port.modem.owner=rild
+    stop gadget-qbp-modem
+    start ril-daemon
+
+service wlan_prod /system/bin/insmod /system/lib/modules/bcm4329.ko "firmware_path=/vendor/firmware/fw_bcm4329.bin nvram_path=/system/etc/wifi/bcm4329.cal"
+    group wifi mot_tcmd system
+    oneshot
+    disabled
+
+service wlan_mfg /system/bin/insmod /system/lib/modules/bcm4329.ko "firmware_path=/vendor/firmware/fw_bcm4329_mfg.bin nvram_path=/system/etc/wifi/bcm4329.cal"
+    group wifi mot_tcmd system
+    oneshot
+    disabled
+
+service wlan_unload /system/bin/rmmod bcm4329
+    group wifi mot_tcmd system
+    oneshot
+    disabled
+
+# turn on wifi for tcmd load production firmware
+on property:tcmd.load_wlan="production"
+    start wlan_prod
+
+# turn on wifi for tcmd load manufacturing firmware
+on property:tcmd.load_wlan="manufacturing"
+    start wlan_mfg
+
+# turn off wifi for tcmd
+on property:tcmd.load_wlan="unload"
+    start wlan_unload
