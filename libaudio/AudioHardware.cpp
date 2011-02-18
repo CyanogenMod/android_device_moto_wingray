@@ -48,7 +48,7 @@ AudioHardware::AudioHardware() :
     mOutput(0), /*mCurOut/InDevice*/ mCpcapCtlFd(-1), mHwOutRate(0), mHwInRate(0),
     mMasterVol(1.0), mVoiceVol(1.0),
     /*mCpcapGain*/
-    mSpkrVolume(-1), mMicVolume(-1)
+    mSpkrVolume(-1), mMicVolume(-1), mEcnsEnabled(false), mBtScoOn(false)
 {
     LOGV("AudioHardware constructor");
 }
@@ -675,21 +675,20 @@ status_t AudioHardware::doRouting_l()
              mCurOutDevice.on ? "on" : "off");
     }
 
-    bool ecnsEnabled = false;
+    mEcnsEnabled = false;
     // enable EC if:
     // - the audio mode is IN_CALL or IN_COMMUNICATION  AND
     // - the output stream is active AND
     // - an input stream with VOICE_COMMUNICATION source is active
     if (isInCall() && !mOutput->getStandby() &&
         input && input->source() == AUDIO_SOURCE_VOICE_COMMUNICATION) {
-        ecnsEnabled = true;
+        mEcnsEnabled = true;
     }
 
-    int oldInRate=mHwInRate, oldOutRate=mHwOutRate;
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
-    int ecnsRate = getActiveInputRate() < 16000? 8000 : 16000;
+    int ecnsRate = (btScoOn || (getActiveInputRate() < 16000)) ? 8000 : 16000;
     // Check input/output rates for HW.
-    if (ecnsEnabled) {
+    if (mEcnsEnabled) {
         mHwInRate = ecnsRate;
         mHwOutRate = mHwInRate;
         LOGD("EC/NS active, requests rate as %d for in/out", mHwInRate);
@@ -697,7 +696,9 @@ status_t AudioHardware::doRouting_l()
     else
 #endif
     {
-        mHwInRate = getActiveInputRate();
+        if (input) {
+            mHwInRate = getActiveInputRate();
+        }
         mHwOutRate = AUDIO_HW_OUT_SAMPLERATE;
         LOGV("No EC/NS, set input rate %d, output %d.", mHwInRate, mHwOutRate);
     }
@@ -712,60 +713,60 @@ status_t AudioHardware::doRouting_l()
         if (!input->isLocked()) {
             input->lock();
         }
-        if (mHwInRate != oldInRate) {
-            LOGV("Minor TODO: Flush input if active.");
-            if (::ioctl(mCpcapCtlFd, CPCAP_AUDIO_IN_SET_RATE,
-                      mHwInRate) < 0)
-                LOGE("could not set input rate(%d): %s",
-                      mHwInRate, strerror(errno));
-            if (::ioctl(mCpcapCtlFd, CPCAP_AUDIO_IN_GET_RATE, &mHwInRate))
-                LOGE("CPCAP driver error reading rates: %s", strerror(errno));
-        }
     }
-
     // acquire mutex if not already locked by write()
     if (!mOutput->isLocked()) {
         mOutput->lock();
-    }
-    int speakerOutRate = 0;
-    if (::ioctl(mCpcapCtlFd, CPCAP_AUDIO_OUT_GET_RATE, &speakerOutRate))
-        LOGE("could not read output rate: %s",
-                   strerror(errno));
-    if (mHwOutRate != oldOutRate ||
-        (speakerOutRate!=AUDIO_HW_OUT_SAMPLERATE && btScoOn)) {
-        int speaker_rate = mHwOutRate;
-        if (btScoOn) {
-            speaker_rate = AUDIO_HW_OUT_SAMPLERATE;
-        }
-        // Flush old data (wrong rate) from I2S driver before changing rate.
-        if (mOutput) {
-            mOutput->flush();
-            if (ecnsEnabled) {
-                mOutput->setNumBufs(AUDIO_HW_NUM_OUT_BUF);
-            } else {
-                mOutput->setNumBufs(AUDIO_HW_NUM_OUT_BUF_LONG);
-            }
-        }
-        // Now the DMA is empty, change the rate.
-        if (::ioctl(mCpcapCtlFd, CPCAP_AUDIO_OUT_SET_RATE,
-                  speaker_rate) < 0)
-            LOGE("could not set output rate(%d): %s",
-                  speaker_rate, strerror(errno));
     }
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
     mAudioPP.setAudioDev(&mCurOutDevice, &mCurInDevice,
                          btScoOn, mBluetoothNrec,
                          spdifOutDevices?true:false);
-    mAudioPP.enableEcns(ecnsEnabled);
+    mAudioPP.enableEcns(mEcnsEnabled);
 #endif
 
     mOutput->setDriver_l(speakerOutDevices?true:false,
                        btScoOn,
                        spdifOutDevices?true:false, mHwOutRate);
+
     if (input) {
         input->setDriver_l(micInDevice?true:false,
-                         btScoInDevice?true:false, mHwInRate);
+                btScoOn, mHwInRate);
     }
+
+    // Changing I2S to port connection when bluetooth starts or stopS must be done simultaneously
+    // for input and output while both DMAs are stopped
+    if (btScoOn != mBtScoOn) {
+        if (input) {
+            input->lockFd();
+            input->stop_l();
+        }
+        mOutput->lockFd();
+        mOutput->flush_l();
+
+        int bit_format = TEGRA_AUDIO_BIT_FORMAT_DEFAULT;
+        bool is_bt_bypass = false;
+        if (btScoOn) {
+            bit_format = TEGRA_AUDIO_BIT_FORMAT_DSP;
+            is_bt_bypass = true;
+        }
+        LOGV("%s: bluetooth state changed. is_bt_bypass %d bit_format %d",
+             __FUNCTION__, is_bt_bypass, bit_format);
+        // Setup the I2S2-> DAP2/4 capture/playback path.
+        if (::ioctl(mOutput->mBtFdIoCtl, TEGRA_AUDIO_SET_BIT_FORMAT, &bit_format) < 0) {
+            LOGE("could not set bit format %s", strerror(errno));
+        }
+        if (::ioctl(mCpcapCtlFd, CPCAP_AUDIO_SET_BLUETOOTH_BYPASS, is_bt_bypass) < 0) {
+            LOGE("could not set bluetooth bypass %s", strerror(errno));
+        }
+
+        mBtScoOn = btScoOn;
+        mOutput->unlockFd();
+        if (input) {
+            input->unlockFd();
+        }
+    }
+
     if (!mOutput->isLocked()) {
         mOutput->unlock();
     }
@@ -775,7 +776,7 @@ status_t AudioHardware::doRouting_l()
 
     // Since HW path may have changed, set the hardware gains.
     int useCase = AUDIO_HW_GAIN_USECASE_MM;
-    if (ecnsEnabled) {
+    if (mEcnsEnabled) {
         useCase = AUDIO_HW_GAIN_USECASE_VOICE;
     } else if (input && input->source() == AUDIO_SOURCE_VOICE_RECOGNITION) {
         useCase = AUDIO_HW_GAIN_USECASE_VOICE_REC;
@@ -849,17 +850,21 @@ AudioHardware::AudioStreamInTegra *AudioHardware::getActiveInput_l()
 //
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
 AudioHardware::AudioStreamSrc::AudioStreamSrc() :
-  mSrcInitted(false)
+        mSrcBuffer(NULL), mSrcInitted(false)
 {
 }
 AudioHardware::AudioStreamSrc::~AudioStreamSrc()
 {
+    if (mSrcBuffer != NULL) {
+        delete[] mSrcBuffer;
+    }
 }
 
 void AudioHardware::AudioStreamSrc::init(int inRate, int outRate)
 {
-    if (mSrcBuffer == NULL)
+    if (mSrcBuffer == NULL) {
         mSrcBuffer = new char[src_memory_required_stereo(MAX_FRAME_LEN, MAX_CONVERT_RATIO)];
+    }
     if (mSrcBuffer == NULL) {
         LOGE("Failed to allocate memory for sample rate converter.");
         return;
@@ -883,8 +888,8 @@ void AudioHardware::AudioStreamSrc::init(int inRate, int outRate)
 
 // always succeeds, must call init() immediately after
 AudioHardware::AudioStreamOutTegra::AudioStreamOutTegra() :
-    mHardware(0), mFd(-1), mFdCtl(-1),
-    mBtFd(-1), mBtFdCtl(-1), mBtFdIoCtl(-1),
+    mBtFdIoCtl(-1), mHardware(0), mFd(-1), mFdCtl(-1),
+    mBtFd(-1), mBtFdCtl(-1),
     mSpdifFd(-1), mSpdifFdCtl(-1),
     mStartCount(0), mRetryCount(0), mDevices(0),
     mIsSpkrEnabled(false), mIsBtEnabled(false), mIsSpdifEnabled(false),
@@ -948,9 +953,6 @@ status_t AudioHardware::AudioStreamOutTegra::initCheck()
 void AudioHardware::AudioStreamOutTegra::setDriver_l(
         bool speaker, bool bluetooth, bool spdif, int sampleRate)
 {
-    int bit_format = TEGRA_AUDIO_BIT_FORMAT_DEFAULT;
-    bool is_bt_bypass = false;
-
     LOGV("%s: Analog speaker? %s. Bluetooth? %s. S/PDIF? %s. sampleRate %d", __FUNCTION__,
         speaker?"yes":"no", bluetooth?"yes":"no", spdif?"yes":"no", sampleRate);
 
@@ -1239,6 +1241,11 @@ void AudioHardware::AudioStreamOutTegra::flush()
 {
     // Prevent someone from writing the fd while we flush
     Mutex::Autolock lock(mFdLock);
+    flush_l();
+}
+
+void AudioHardware::AudioStreamOutTegra::flush_l()
+{
     LOGD("AudioStreamOutTegra::flush()");
     if (::ioctl(mFdCtl, TEGRA_AUDIO_OUT_FLUSH) < 0)
        LOGE("could not flush playback: %s", strerror(errno));
@@ -1287,28 +1294,27 @@ status_t AudioHardware::AudioStreamOutTegra::online_l()
         }
         mIsSpkrEnabled = mIsSpkrEnabledReq;
 
-        if ((mIsBtEnabled && !mIsBtEnabledReq) ||
-            (mIsSpdifEnabled && !mIsSpdifEnabledReq)) {
-            flush();
-        }
         mIsBtEnabled = mIsBtEnabledReq;
         mIsSpdifEnabled = mIsSpdifEnabledReq;
 
-        int bit_format = TEGRA_AUDIO_BIT_FORMAT_DEFAULT;
-        bool is_bt_bypass = false;
-        if (mIsBtEnabled) {
-            bit_format = TEGRA_AUDIO_BIT_FORMAT_DSP;
-            is_bt_bypass = true;
-        }
-        // Setup the I2S2-> DAP2/4 capture/playback path.
-        if (::ioctl(mBtFdIoCtl, TEGRA_AUDIO_SET_BIT_FORMAT, &bit_format) < 0) {
-            LOGE("could not set bit format %s", strerror(errno));
-        }
-        if (::ioctl(mHardware->mCpcapCtlFd, CPCAP_AUDIO_SET_BLUETOOTH_BYPASS, is_bt_bypass) < 0) {
-            LOGE("could not set bluetooth bypass %s", strerror(errno));
-        }
-
     }
+
+    // Flush old data (wrong rate) from I2S driver before changing rate.
+    flush();
+    if (mHardware->mEcnsEnabled) {
+        setNumBufs(AUDIO_HW_NUM_OUT_BUF);
+    } else {
+        setNumBufs(AUDIO_HW_NUM_OUT_BUF_LONG);
+    }
+    int speaker_rate = mHardware->mHwOutRate;
+    if (mIsBtEnabled) {
+        speaker_rate = AUDIO_HW_OUT_SAMPLERATE;
+    }
+    // Now the DMA is empty, change the rate.
+    if (::ioctl(mHardware->mCpcapCtlFd, CPCAP_AUDIO_OUT_SET_RATE,
+              speaker_rate) < 0)
+        LOGE("could not set output rate(%d): %s",
+              speaker_rate, strerror(errno));
 
     mDriverRate = mHardware->mHwOutRate;
 
@@ -1507,15 +1513,6 @@ AudioHardware::AudioStreamInTegra::~AudioStreamInTegra()
 
     standby();
 
-    if (mFd >= 0) {
-        ::close(mFd);
-        mFd = -1;
-    }
-
-    if (mFdCtl >= 0) {
-        ::close(mFdCtl);
-        mFdCtl = -1;
-    }
 }
 
 // Called with mHardware->mLock and mLock held.
@@ -1597,7 +1594,6 @@ ssize_t AudioHardware::AudioStreamInTegra::read(void* buffer, ssize_t bytes)
                     status = NO_INIT;
                     goto error;
                 }
-                reopenReconfigDriver();
             }
         } else {
             hwReadBytes = bytes;
@@ -1605,7 +1601,10 @@ ssize_t AudioHardware::AudioStreamInTegra::read(void* buffer, ssize_t bytes)
             mSrc.deinit();
         }
         // Read from driver, or ECNS thread, as appropriate.
-        ret = mHardware->mAudioPP.read(mFd, inbuf, hwReadBytes, mDriverRate);
+        {
+            Mutex::Autolock dfl(mFdLock);
+            ret = mHardware->mAudioPP.read(mFd, inbuf, hwReadBytes, mDriverRate);
+        }
         if (ret>0 && srcReqd) {
             mSrc.mIoData.in_buf_ch1 = (SRC16 *) (inbuf);
             mSrc.mIoData.in_buf_ch2 = 0;
@@ -1626,7 +1625,10 @@ ssize_t AudioHardware::AudioStreamInTegra::read(void* buffer, ssize_t bytes)
             status = INVALID_OPERATION;
             goto error;
         }
-        ret = ::read(mFd, buffer, hwReadBytes);
+        {
+            Mutex::Autolock dfl(mFdLock);
+            ret = ::read(mFd, buffer, hwReadBytes);
+        }
 #endif
 
         // It is not optimal to mute after all the above processing but it is necessary to
@@ -1645,7 +1647,10 @@ ssize_t AudioHardware::AudioStreamInTegra::read(void* buffer, ssize_t bytes)
             goto error;
         }
 
-        mTotalBuffersRead++;
+        {
+            Mutex::Autolock _fl(mFramesLock);
+            mTotalBuffersRead++;
+        }
         return ret;
     }
 
@@ -1696,31 +1701,9 @@ status_t AudioHardware::AudioStreamInTegra::online_l()
 {
     status_t status = NO_ERROR;
 
+    reopenReconfigDriver();
+
     if (mState < AUDIO_STREAM_NEW_RATE_REQ) {
-
-        reopenReconfigDriver();
-
-        // configuration
-        struct tegra_audio_in_config config;
-        status = ::ioctl(mFdCtl, TEGRA_AUDIO_IN_GET_CONFIG, &config);
-        if (status < 0) {
-            LOGE("cannot read input config: %s", strerror(errno));
-            return status;
-        }
-        config.stereo = AudioSystem::popCount(mChannels) == 2;
-        config.rate = mSampleRate;
-        status = ::ioctl(mFdCtl, TEGRA_AUDIO_IN_SET_CONFIG, &config);
-
-        if (status < 0) {
-            LOGE("cannot set input config: %s", strerror(errno));
-            if (::ioctl(mFdCtl, TEGRA_AUDIO_IN_GET_CONFIG, &config) == 0) {
-                if (config.stereo) {
-                    mChannels = AudioSystem::CHANNEL_IN_STEREO;
-                } else {
-                    mChannels = AudioSystem::CHANNEL_IN_MONO;
-                }
-            }
-        }
 
         // Use standby to flush the driver.  mHardware->mLock should already be held
 
@@ -1736,12 +1719,43 @@ status_t AudioHardware::AudioStreamInTegra::online_l()
             mLocked = true;
             mHardware->doRouting_l();
             mLocked = false;
-            mTotalBuffersRead = 0;
-            mStartTimeNs = systemTime();
+            {
+                Mutex::Autolock _fl(mFramesLock);
+                mTotalBuffersRead = 0;
+                mStartTimeNs = systemTime();
+            }
         }
+
+        // configuration
+        struct tegra_audio_in_config config;
+        status = ::ioctl(mFdCtl, TEGRA_AUDIO_IN_GET_CONFIG, &config);
+        if (status < 0) {
+            LOGE("cannot read input config: %s", strerror(errno));
+            return status;
+        }
+        config.stereo = AudioSystem::popCount(mChannels) == 2;
+        config.rate = mHardware->mHwInRate;
+        status = ::ioctl(mFdCtl, TEGRA_AUDIO_IN_SET_CONFIG, &config);
+
+        if (status < 0) {
+            LOGE("cannot set input config: %s", strerror(errno));
+            if (::ioctl(mFdCtl, TEGRA_AUDIO_IN_GET_CONFIG, &config) == 0) {
+                if (config.stereo) {
+                    mChannels = AudioSystem::CHANNEL_IN_STEREO;
+                } else {
+                    mChannels = AudioSystem::CHANNEL_IN_MONO;
+                }
+            }
+        }
+
+
     }
 
     mDriverRate = mHardware->mHwInRate;
+
+    if (::ioctl(mHardware->mCpcapCtlFd, CPCAP_AUDIO_IN_SET_RATE,
+                mDriverRate) < 0)
+        LOGE("could not set input rate(%d): %s", mDriverRate, strerror(errno));
 
     mState = AUDIO_STREAM_CONFIGURED;
 
@@ -1780,6 +1794,7 @@ void AudioHardware::AudioStreamInTegra::reopenReconfigDriver()
         // here we would set mInit = true;
     }
 }
+
 
 status_t AudioHardware::AudioStreamInTegra::dump(int fd, const Vector<String16>& args)
 {
@@ -1858,7 +1873,7 @@ String8 AudioHardware::AudioStreamInTegra::getParameters(const String8& keys)
 
 unsigned int  AudioHardware::AudioStreamInTegra::getInputFramesLost() const
 {
-    Mutex::Autolock _l(mLock);
+    Mutex::Autolock _l(mFramesLock);
     unsigned int lostFrames = 0;
     if (!getStandby()) {
         unsigned int framesPerBuffer = bufferSize() / frameSize();
@@ -1876,6 +1891,16 @@ unsigned int  AudioHardware::AudioStreamInTegra::getInputFramesLost() const
     mStartTimeNs = systemTime();
 
     return lostFrames;
+}
+
+// must be called with mLock and mFdLock held
+void AudioHardware::AudioStreamInTegra::stop_l()
+{
+    LOGV("AudioStreamInTegra::stop_l() starts");
+    if (::ioctl(mFdCtl, TEGRA_AUDIO_IN_STOP) < 0) {
+        LOGE("could not stop recording: %d %s", errno, strerror(errno));
+    }
+    LOGV("AudioStreamInTegra::stop_l() returns");
 }
 
 // ----------------------------------------------------------------------------

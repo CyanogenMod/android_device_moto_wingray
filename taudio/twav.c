@@ -113,15 +113,13 @@ main(int argc, char *argv[])
     assert(sampling_rate >= 0);
     assert(num_channels >= 0);
 
-    if (optind >= argc) {
-          fprintf(stderr, "Expected argument after options\n");
-          exit(EXIT_FAILURE);
-    }
+    FAILIF(!output, "Expecting an output file name\n");
+    FAILIF(optind >= argc, "Expecting an input file name\n");
 
     input = argv[optind];
 
     printf("> input %s\n", input);
-    printf("> output %s\n", input);
+    printf("> output %s\n", output);
     printf("> bits per sample %d\n", bits_per_sample);
     printf("> sampling rate %d\n", sampling_rate);
     printf("> channels %d\n", num_channels);

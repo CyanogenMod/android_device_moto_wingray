@@ -131,6 +131,7 @@ int main(int argc, char **argv)
     while ((opt = getopt(argc, argv, "o:s:c:w")) != -1) {
         switch (opt) {
         case 'o':
+            FAILIF(output != NULL, "Multiple output files not supported\n");
             output = strdup(optarg);
             break;
         case 's':

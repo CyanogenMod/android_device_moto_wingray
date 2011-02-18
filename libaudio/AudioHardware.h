@@ -198,10 +198,11 @@ private:
         virtual size_t      bufferSize() const { return 4096; }
         virtual uint32_t    channels() const { return AudioSystem::CHANNEL_OUT_STEREO; }
         virtual int         format() const { return AudioSystem::PCM_16_BIT; }
-        virtual uint32_t    latency() const { return (1000*AUDIO_HW_NUM_OUT_BUF*(bufferSize()/frameSize()))/sampleRate()+AUDIO_HW_OUT_LATENCY_MS; }
+        virtual uint32_t    latency() const { return (1000*AUDIO_HW_NUM_OUT_BUF_LONG*(bufferSize()/frameSize()))/sampleRate()+AUDIO_HW_OUT_LATENCY_MS; }
         virtual status_t    setVolume(float left, float right) { return INVALID_OPERATION; }
         virtual ssize_t     write(const void* buffer, size_t bytes);
                 void        flush();
+                void        flush_l();
         virtual status_t    standby();
                 status_t    online_l();
         virtual status_t    dump(int fd, const Vector<String16>& args);
@@ -214,6 +215,10 @@ private:
                 void        unlock() { mLock.unlock(); }
                 bool        isLocked() { return mLocked; }
                 void        setNumBufs(int numBufs);
+                void        lockFd() { mFdLock.lock(); }
+                void        unlockFd() { mFdLock.unlock(); }
+
+                int         mBtFdIoCtl;
 
     private:
                 AudioHardware* mHardware;
@@ -222,7 +227,6 @@ private:
                 int         mFdCtl;
                 int         mBtFd;
                 int         mBtFdCtl;
-                int         mBtFdIoCtl;
                 int         mSpdifFd;
                 int         mSpdifFdCtl;
                 int         mStartCount;
@@ -275,12 +279,15 @@ private:
                 void        lock() { mLock.lock(); }
                 void        unlock() { mLock.unlock(); }
                 bool        isLocked() { return mLocked; }
+                void        stop_l();
+                void        lockFd() { mFdLock.lock(); }
+                void        unlockFd() { mFdLock.unlock(); }
 
     private:
                 void        reopenReconfigDriver();
 
                 AudioHardware* mHardware;
-        mutable Mutex       mLock;
+                Mutex       mLock;
                 int         mFd;
                 int         mFdCtl;
                 int         mState;
@@ -303,6 +310,8 @@ private:
         mutable uint32_t    mTotalBuffersRead;
         mutable nsecs_t     mStartTimeNs;
                 int         mDriverRate;
+        mutable Mutex       mFramesLock;
+                Mutex       mFdLock;
     };
 
             static const uint32_t inputSamplingRates[];
@@ -332,6 +341,8 @@ private:
 #endif
             int mSpkrVolume;
             int mMicVolume;
+            bool mEcnsEnabled;
+            bool mBtScoOn;
 };
 
 // ----------------------------------------------------------------------------
