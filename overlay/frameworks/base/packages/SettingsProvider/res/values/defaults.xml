@@ -17,7 +17,7 @@
  */
 -->
 <resources>
-    <!-- 5 minutes for default screen timeout -->
+    <!-- 2 minutes for default screen timeout -->
     <integer name="def_screen_off_timeout">120000</integer>
     <!-- Set the automatic brightness mode on by default -->
     <bool name="def_screen_brightness_automatic_mode">true</bool>

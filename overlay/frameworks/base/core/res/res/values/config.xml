@@ -81,10 +81,13 @@
     </string-array>
 
     <!-- Boolean indicating if we require the use of DUN on mobile for tethering -->
-    <bool translatable="false" name="config_tether_dun_required">true</bool>
+    <bool translatable="false" name="config_tether_dun_required">false</bool>
 
     <!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
     <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
+
+    <!-- Boolean indicating whether the wifi chipset has background scan support -->
+    <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
 
     <!-- Component name of the service providing network location support. -->
     <string name="config_networkLocationProvider">com.google.android.location.NetworkLocationProvider</string>
@@ -97,6 +100,17 @@
 
     <!-- Indicate whether the device has USB host support. -->
     <bool name="config_hasUsbHostSupport">true</bool>
+
+    <!-- List of file paths for USB host busses to exclude from USB host support.
+         For example, if the first USB bus on the device is used to communicate
+         with the modem or some other restricted hardware, add "/dev/bus/usb/001/"
+         to this list.  If this is empty, no parts of the host USB bus will be excluded.
+    -->
+    <string-array name="config_usbHostBlacklist">
+        <!--  /dev/bus/usb/003 is the external bus. Exclude the others. -->
+        <item>/dev/bus/usb/001</item>
+        <item>/dev/bus/usb/002</item>
+    </string-array>
 
     <!-- Number of megabytes of space to leave unallocated by MTP.
          MTP will subtract this value from the free space it reports back
