@@ -24,6 +24,12 @@ PRODUCT_PROPERTY_OVERRIDES := \
 include frameworks/base/build/tablet-dalvik-heap.mk
 
 PRODUCT_COPY_FILES += \
+    device/moto/wingray/init.stingray.rc:root/init.stingray.rc \
+    device/moto/wingray/init.stingray.rc:root/init.olympus.rc \
+    device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc \
+    device/moto/wingray/ueventd.stingray.rc:root/ueventd.olympus.rc
+
+PRODUCT_COPY_FILES += \
     device/moto/wingray/bcm4329.ko:system/lib/modules/bcm4329.ko \
     device/moto/wingray/mXT1386_08_AA.bin:system/etc/firmware/mXT1386_08_AA.bin \
     device/moto/wingray/mXT1386_08_E1.bin:system/etc/firmware/mXT1386_08_E1.bin \
