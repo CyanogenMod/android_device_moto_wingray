@@ -237,8 +237,6 @@ service gadget-qbp-diag /system/bin/tty2ttyd /dev/ttyUSB0 /dev/ttyGS2 0 1024
 on property:ro.bootmode=factorycable
     start tcmd
     start ftmipcd
-    mount ext2 /dev/block/platform/sdhci-tegra.3/by-name/pdsb /pds wait noatime nosuid nodev remount
-    mkdir /pds/security 0771 system system
 
 on property:ro.bootmode=qbp-hw-bypass
     setprop ril.moto-qc.usb-hw-bypass.state "on"
