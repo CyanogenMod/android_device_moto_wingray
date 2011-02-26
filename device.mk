@@ -14,65 +14,6 @@
 # limitations under the License.
 #
 
-DEVICE_PACKAGE_OVERLAYS := \
-    device/moto/wingray/overlay
+$(call inherit-product, device/moto/wingray/device_base.mk)
 
-PRODUCT_PROPERTY_OVERRIDES := \
-    wifi.interface=wlan0 \
-    wifi.supplicant_scan_interval=15
-    
-include frameworks/base/build/tablet-dalvik-heap.mk
-
-PRODUCT_COPY_FILES += \
-    device/moto/wingray/init.stingray.rc:root/init.stingray.rc \
-    device/moto/wingray/init.stingray.rc:root/init.olympus.rc \
-    device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc \
-    device/moto/wingray/ueventd.stingray.rc:root/ueventd.olympus.rc
-
-PRODUCT_COPY_FILES += \
-    device/moto/wingray/bcm4329.ko:system/lib/modules/bcm4329.ko \
-    device/moto/wingray/mXT1386_08_AA.bin:system/etc/firmware/mXT1386_08_AA.bin \
-    device/moto/wingray/mXT1386_08_E1.bin:system/etc/firmware/mXT1386_08_E1.bin \
-    device/moto/wingray/mXT1386_09_AA.bin:system/etc/firmware/mXT1386_09_AA.bin \
-    device/moto/wingray/mXT1386_10_AA.bin:system/etc/firmware/mXT1386_10_AA.bin \
-    device/moto/wingray/ril/tty2ttyd:system/bin/tty2ttyd \
-    device/moto/wingray/mXT1386_10_FF.bin:system/etc/firmware/mXT1386_10_FF.bin
-
-PRODUCT_COPY_FILES += \
-    frameworks/base/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
-    frameworks/base/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
-    frameworks/base/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
-    frameworks/base/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
-    frameworks/base/data/etc/android.hardware.sensor.barometer.xml:system/etc/permissions/android.hardware.sensor.barometer.xml \
-    frameworks/base/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
-    frameworks/base/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
-    frameworks/base/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
-    frameworks/base/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
-		frameworks/base/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
-    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
-
-PRODUCT_COPY_FILES += \
-        device/moto/wingray/vold.fstab:system/etc/vold.fstab \
-        device/moto/wingray/qtouch-touchscreen.idc:system/usr/idc/qtouch-touchscreen.idc \
-        device/moto/wingray/cpcap-key.kl:system/usr/keylayout/cpcap-key.kl \
-        device/moto/wingray/cpcap-key.kcm:system/usr/keychars/cpcap-key.kcm \
-        device/moto/wingray/stingray-keypad.kl:system/usr/keylayout/stingray-keypad.kl \
-        device/moto/wingray/stingray-keypad.kcm:system/usr/keychars/stingray-keypad.kcm
-
-PRODUCT_PACKAGES := \
-    sensors.stingray \
-    lights.stingray \
-    librs_jni \
-    make_ext4fs \
-    l2ping \
-    hcitool \
-    bttest
-
-PRODUCT_CHARACTERISTICS := tablet,nosdcard
-
-# we have enough storage space to hold precise GC data
-PRODUCT_TAGS += dalvik.gc.type-precise
-
-# media config xml file
-PRODUCT_COPY_FILES += \
-    device/moto/wingray/media_profiles.xml:system/etc/media_profiles.xml
+# Add commands which are wingray specific after here
