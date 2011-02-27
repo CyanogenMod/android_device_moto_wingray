@@ -98,9 +98,6 @@
     <!-- Set to true for backward compatibility with apps that require external storage. -->
     <bool name="config_emulateExternalStorage">true</bool>
 
-    <!-- Indicate whether the device has USB host support. -->
-    <bool name="config_hasUsbHostSupport">true</bool>
-
     <!-- List of file paths for USB host busses to exclude from USB host support.
          For example, if the first USB bus on the device is used to communicate
          with the modem or some other restricted hardware, add "/dev/bus/usb/001/"
