@@ -1,3 +1,3 @@
 require mid=001
-require product=stingray
-require version-bootloader=1037
+require product=xoom-wifi|xoom-cdma|stingray
+require version-bootloader=1038
