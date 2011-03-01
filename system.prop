@@ -4,7 +4,6 @@ rild.libpath=/system/lib/libmoto_ril.so
 persist.ril.mux.ttydevice=/dev/usb/tty2-1:1.2
 persist.ril.mux.noofchannels=8
 persist.ril.modem.mode=1
-ro.cdma.home.operator.numeric=310004
 ro.cdma.home.operator.alpha=Verizon
 ro.cdma.homesystem=64,65,76,77,78,79,80,81,82,83
 ro.cdma.data_retry_config=default_randomization=2000,0,0,120000,180000,540000,960000
