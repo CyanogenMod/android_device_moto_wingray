@@ -48,7 +48,6 @@ PRODUCT_COPY_FILES += \
     frameworks/base/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/base/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
     frameworks/base/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-    frameworks/base/data/etc/com.google.android.usb.xml:system/etc/permissions/com.google.android.usb.xml \
     packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
 
 PRODUCT_COPY_FILES += \
@@ -67,7 +66,7 @@ PRODUCT_PACKAGES := \
     l2ping \
     hcitool \
     bttest \
-    com.google.android.usb
+    com.android.future.usb.accessory
 
 PRODUCT_CHARACTERISTICS := tablet,nosdcard
 
