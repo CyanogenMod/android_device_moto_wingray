@@ -211,7 +211,7 @@ private:
         virtual String8     getParameters(const String8& keys);
                 uint32_t    devices() { return mDevices; }
         virtual status_t    getRenderPosition(uint32_t *dspFrames);
-                void        lock() { mLock.lock(); }
+                void        lock() { mSleepReq = true; mLock.lock();  mSleepReq = false; }
                 void        unlock() { mLock.unlock(); }
                 bool        isLocked() { return mLocked; }
                 void        setNumBufs(int numBufs);
@@ -248,6 +248,7 @@ private:
                 bool        mLocked;        // setDriver() doesn't have to lock if true
                 int         mDriverRate;
                 bool        mInit;
+                bool        mSleepReq;
     };
 
     class AudioStreamInTegra : public AudioStreamIn {
@@ -276,7 +277,7 @@ private:
                 uint32_t    devices() { return mDevices; }
                 void        setDriver_l(bool mic, bool bluetooth, int sampleRate);
                 int         source() const { return mSource; }
-                void        lock() { mLock.lock(); }
+                void        lock() { mSleepReq = true; mLock.lock(); mSleepReq = false; }
                 void        unlock() { mLock.unlock(); }
                 bool        isLocked() { return mLocked; }
                 void        stop_l();
@@ -312,6 +313,7 @@ private:
                 int         mDriverRate;
         mutable Mutex       mFramesLock;
                 Mutex       mFdLock;
+                bool        mSleepReq;
     };
 
             static const uint32_t inputSamplingRates[];
