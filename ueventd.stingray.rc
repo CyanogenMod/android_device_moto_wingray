@@ -21,3 +21,4 @@
 /dev/qcqmi0	0640	radio	radio
 /dev/qcqmi1	0640	radio	radio
 /dev/qcqmi2	0640	radio	radio
+/dev/tegra_fuse	0660	system	system
