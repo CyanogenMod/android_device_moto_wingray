@@ -68,6 +68,9 @@ PRODUCT_PACKAGES := \
     bttest \
     com.android.future.usb.accessory
 
+# Pick up resource for xlarge screen.
+PRODUCT_AAPT_CONFIG := xlarge
+
 PRODUCT_CHARACTERISTICS := tablet,nosdcard
 
 # we have enough storage space to hold precise GC data
