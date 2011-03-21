@@ -107,11 +107,19 @@ on boot
     chown media media /sys/class/switch/dock/dock_prop
     chmod 660 /sys/class/switch/dock/dock_prop
 
-# Modem Control
+# Modem Control CDMA
     chown radio radio /sys/class/radio/mdm6600/command
     chmod 220 /sys/class/radio/mdm6600/command
     chown radio radio /sys/bus/usb/devices/usb2/power/control
     chmod 660 /sys/bus/usb/devices/usb2/power/control
+
+# Modem Control LTE
+# DELETE the following write once LTE card is supported
+    write /sys/class/radio/wrigley/command shutdown
+    chown radio radio /sys/class/radio/wrigley/command
+    chmod 220 /sys/class/radio/wrigley/command
+    chown radio radio /sys/bus/usb/devices/usb1/power/control
+    chmod 660 /sys/bus/usb/devices/usb1/power/control
 
 # Power Management Settings
     #write /sys/devices/platform/ohci.0/usb2/2-3/power/level auto
