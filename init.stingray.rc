@@ -6,6 +6,7 @@ on early-init
     # for backwards compatibility
     symlink /mnt/sdcard /sdcard
     mkdir /pds 0777 system system
+    mkdir /mnt/external1 0000 system system
 
 on fs
     mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/system /system wait ro
