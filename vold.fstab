@@ -10,4 +10,5 @@
 ## <sysfs_path> - List of sysfs paths to source devices
 ######################
 
-# No SD card - nothing to do here
+# Mounts the first usable partition of the specified device
+dev_mount sdcard /mnt/external1 auto /devices/platform/sdhci-tegra.2/mmc_host/mmc1
