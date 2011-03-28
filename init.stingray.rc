@@ -175,11 +175,21 @@ service dhcpcd_eth0 /system/bin/dhcpcd -ABKL
     disabled
     oneshot
 
+# bluetooth
+service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
+    disabled
+    oneshot
+
 service iprenew_wlan0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
 service iprenew_eth0 /system/bin/dhcpcd -n
+    disabled
+    oneshot
+
+# bluetooth
+service iprenew_bnep0 /system/bin/dhcpcd -n
     disabled
     oneshot
 
