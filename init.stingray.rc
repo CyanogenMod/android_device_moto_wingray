@@ -114,8 +114,8 @@ on boot
     chmod 660 /sys/bus/usb/devices/usb2/power/control
 
 # Modem Control LTE
-# DELETE the following write once LTE card is supported
-    write /sys/class/radio/wrigley/command shutdown
+# TODO: remove following line once bootloader powers on lte card
+    write /sys/class/radio/wrigley/command powerup
     chown radio radio /sys/class/radio/wrigley/command
     chmod 220 /sys/class/radio/wrigley/command
     chown radio radio /sys/bus/usb/devices/usb1/power/control
