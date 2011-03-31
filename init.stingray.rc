@@ -247,6 +247,10 @@ service gadget-qbp-diag /system/bin/tty2ttyd /dev/ttyUSB0 /dev/ttyGS2 0 1024
     oneshot
     disabled
 
+service wrigley-diag /system/bin/wrigley-diag.sh
+    oneshot
+    disabled
+
 on property:ro.bootmode=factorycable
     start tcmd
     start ftmipcd
@@ -258,7 +262,7 @@ on property:ro.bootmode=bp-tools
     start tcmd
     start gadget-lte-modem
     start gadget-qbp-diag
-    write /proc/sys/net/ipv4/ip_forward 1
+    start wrigley-diag
 
 on property:ril.moto-qc.port.modem.owner=gadget
     stop ril-daemon
