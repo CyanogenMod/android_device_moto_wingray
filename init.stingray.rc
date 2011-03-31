@@ -262,17 +262,8 @@ on property:ro.bootmode=bp-tools
     start tcmd
     start gadget-lte-modem
     start gadget-qbp-diag
-    start wrigley-diag
-
-on property:ril.moto-qc.port.modem.owner=gadget
-    stop ril-daemon
     start gadget-qbp-modem
-    start ril-daemon
-
-on property:ril.moto-qc.port.modem.owner=rild
-    stop ril-daemon
-    stop gadget-qbp-modem
-    start ril-daemon
+    start wrigley-diag
 
 service wlan_prod /system/bin/insmod /system/lib/modules/bcm4329.ko "firmware_path=/vendor/firmware/fw_bcm4329.bin nvram_path=/system/etc/wifi/bcm4329.cal"
     group wifi mot_tcmd system
