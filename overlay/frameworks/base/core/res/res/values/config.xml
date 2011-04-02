@@ -108,9 +108,11 @@
          to this list.  If this is empty, no parts of the host USB bus will be excluded.
     -->
     <string-array name="config_usbHostBlacklist">
-        <!--  /dev/bus/usb/003 is the external bus. Exclude the others. -->
+        <!--  /dev/bus/usb/002 is the external bus. Exclude the others.
+              NOTE: on stingray 002 is the 3G modem, and the external bus is 003,
+              so we have a different variant of this in the stingray overlay.
+   -->
         <item>/dev/bus/usb/001</item>
-        <item>/dev/bus/usb/002</item>
     </string-array>
 
     <!-- Number of megabytes of space to leave unallocated by MTP.
