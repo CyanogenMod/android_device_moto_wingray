@@ -32,7 +32,9 @@ extern "C" {
 }
 #endif
 
-namespace android {
+namespace android_audio_legacy {
+    using android::Mutex;
+    using android::SortedVector;
 
 #include <linux/cpcap_audio.h>
 #include <linux/tegra_audio.h>

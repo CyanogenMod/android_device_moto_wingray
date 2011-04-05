@@ -61,6 +61,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES := \
     sensors.stingray \
     lights.stingray \
+    audio.primary.stingray \
+    audio.a2dp.default \
+    audio_policy.stingray \
     librs_jni \
     make_ext4fs \
     l2ping \

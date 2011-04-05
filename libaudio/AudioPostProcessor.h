@@ -18,12 +18,19 @@
 #define ANDROID_AUDIO_POST_PROCESSOR_H
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
 
+#include <utils/threads.h>
+
 extern "C" {
 #include "cto_audio_mm.h"
 }
 #include "mot_acoustics.h"
 
-namespace android {
+namespace android_audio_legacy {
+    using android::Mutex;
+    using android::AutoMutex;
+    using android::Condition;
+    using android::Thread;
+    using android::sp;
 
 class AudioPostProcessor
 {
