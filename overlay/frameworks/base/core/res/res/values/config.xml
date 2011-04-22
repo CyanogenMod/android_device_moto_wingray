@@ -30,16 +30,20 @@
          attributes.  This is used by the connectivity manager to decide which networks can coexist
          based on the hardware -->
     <!-- An Array of "[Connection name],[ConnectivityManager connection type],
-         [associated radio-type],[priority]  -->
+         [associated radio-type],[priority],[dependency-met]  -->
+    <!-- dependency-met is optional and defaults to true. It controls if connectivity is blocked by
+         dependencies -->
     <string-array translatable="false" name="networkAttributes">
-        <item>"wifi,1,1,2"</item>
-        <item>"mobile,0,0,1"</item>
-        <item>"mobile_mms,2,0,3"</item>
-        <item>"mobile_supl,3,0,3"</item>
-        <item>"mobile_dun,4,0,5"</item>
-        <item>"bluetooth,7,7,0"</item>
-        <item>"mobile_hipri,5,0,4"</item>
-        <item>"ethernet,9,9,6"</item>
+        <item>"wifi,1,1,2,true"</item>
+        <item>"mobile,0,0,1,false"</item>
+        <item>"mobile_mms,2,0,2,false"</item>
+        <item>"mobile_supl,3,0,2,false"</item>
+        <item>"mobile_dun,4,0,5,false"</item>
+        <item>"mobile_hipri,5,0,3,false"</item>
+        <item>"bluetooth,7,7,0,true"</item>
+        <item>"mobile_fota,10,0,2,true"</item>
+        <item>"mobile_ims,11,0,2,true"</item>
+        <item>"mobile_cbs,12,0,2,false"</item>
     </string-array>
 
     <!-- This string array should be overridden by the device to present a list of radio
