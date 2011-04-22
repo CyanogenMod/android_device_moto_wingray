@@ -33,6 +33,8 @@ on post-fs-data
     chmod 0660 /data/tpapi/etc/tpa/persistent/keymaptable.lock
     chown system system /data/tpapi/etc/tpa/persistent/keyring.lock
     chmod 0660 /data/tpapi/etc/tpa/persistent/keyring.lock
+    chown system system /data/tpapi/etc/tpa/persistent/iprm.lock
+    chmod 0660 /data/tpapi/etc/tpa/persistent/iprm.lock
 
     # cleanup obsolete symlink hack that may be lying around
     rm /data/misc/ril
