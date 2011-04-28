@@ -32,7 +32,7 @@
 #include "AudioHardware.h"
 #include <media/AudioRecord.h>
 
-namespace android {
+namespace android_audio_legacy {
 const uint32_t AudioHardware::inputSamplingRates[] = {
     8000, 11025, 12000, 16000, 22050, 32000, 44100, 48000
 };

@@ -48,7 +48,7 @@ struct timeval mtv1, mtv2, mtv3, mtv4, mtv5, mtv6, mtv7, mtv8;
 #define GETTIMEOFDAY(a,b)
 #endif
 
-namespace android {
+namespace android_audio_legacy {
 
 AudioPostProcessor::AudioPostProcessor() :
     mEcnsScratchBuf(0), mLogNumPoints(0),  mEcnsDlBuf(0), mEcnsThread(0)
