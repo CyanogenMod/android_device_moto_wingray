@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 namespace android_audio_legacy {
+    using android::AutoMutex;
     using android::Mutex;
     using android::SortedVector;
 
