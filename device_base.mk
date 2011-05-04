@@ -59,6 +59,7 @@ PRODUCT_COPY_FILES += \
         device/moto/wingray/stingray-keypad.kcm:system/usr/keychars/stingray-keypad.kcm
 
 PRODUCT_PACKAGES := \
+    camera.stingray \
     sensors.stingray \
     lights.stingray \
     audio.primary.stingray \
