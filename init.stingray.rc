@@ -149,6 +149,10 @@ on boot
     # Disable charging LED
     write /sys/class/gpio/gpio168/value 1
 
+# LTE specific TCP buffer setting for stingray
+    # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
+    setprop net.tcp.buffersize.lte     524288,1048576,2097152,262144,524288,1048576
+
 # Ecompass daemon
 service akmd2 /system/bin/akmd2
     class late_start
