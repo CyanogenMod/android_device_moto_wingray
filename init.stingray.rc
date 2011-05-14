@@ -270,15 +270,12 @@ on property:dev.bootcomplete=1
    start savebpver
 
 service gadget-lte-modem /system/bin/tty2ttyd /dev/ttyACM0 /dev/ttyGS0 0 512
-    oneshot
     disabled
 
 service gadget-qbp-modem /system/bin/tty2ttyd /dev/ttyUSB4 /dev/ttyGS1 0 1024
-    oneshot
     disabled
 
 service gadget-qbp-diag /system/bin/tty2ttyd /dev/ttyUSB0 /dev/ttyGS2 0 1024
-    oneshot
     disabled
 
 service wrigley-diag /system/bin/wrigley-diag.sh
