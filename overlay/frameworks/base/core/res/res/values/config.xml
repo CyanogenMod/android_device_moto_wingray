@@ -105,28 +105,6 @@
     <!-- Component name of the service providing geocoder API support. -->
     <string name="config_geocodeProvider">com.google.android.location.GeocodeProvider</string>
 
-    <!-- Set to true for backward compatibility with apps that require external storage. -->
-    <bool name="config_emulateExternalStorage">true</bool>
-
-    <!-- List of mount points for external storage devices.
-         The first item on the list should be the primary external storage and should match the
-         value returned by Environment.getExternalStorageDirectory (/mnt/sdcard).
-         MTP storage IDs will be generated based on the position of the mountpoint in this list:
-            0x00010001 - ID for primary external storage (/mnt/sdcard)
-            0x00020001 - ID for first secondary external storage
-            0x00030001 - ID for second secondary external storage
-         etc. -->
-    <string-array translatable="false" name="config_externalStoragePaths">
-        <item>"/mnt/sdcard"</item>
-        <item>"/mnt/external1"</item>
-    </string-array>
-
-    <!-- User visible descriptions of the volumes in the config_externalStoragePaths array. -->
-    <string-array translatable="true" name="config_externalStorageDescriptions">
-        <item>"Internal Storage"</item>
-        <item>"SD Card"</item>
-    </string-array>
-
     <!-- List of file paths for USB host busses to exclude from USB host support.
          For example, if the first USB bus on the device is used to communicate
          with the modem or some other restricted hardware, add "/dev/bus/usb/001/"
@@ -139,15 +117,6 @@
    -->
         <item>/dev/bus/usb/001</item>
     </string-array>
-
-    <!-- Number of megabytes of space to leave unallocated by MTP.
-         MTP will subtract this value from the free space it reports back
-         to the host via GetStorageInfo, and will not allow new files to
-         be added via MTP if there is less than this amount left free in the storage.
-         Since MTP is sharing storage with the rest of the system, we are reserving
-         100 megabytes of space to ensure that MTP activity does not result in the
-         storage being too close to full. -->
-    <integer name="config_mtpReserveSpaceMegabytes">100</integer>
 
     <!-- Flag indicating whether the we should enable the automatic brightness in Settings.
          Software implementation will be used if config_hardware_auto_brightness_available is not set -->

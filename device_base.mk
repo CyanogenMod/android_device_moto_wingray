@@ -72,7 +72,7 @@ PRODUCT_PACKAGES := \
     bttest \
     com.android.future.usb.accessory
 
-PRODUCT_CHARACTERISTICS := tablet,nosdcard
+PRODUCT_CHARACTERISTICS := tablet
 
 # we have enough storage space to hold precise GC data
 PRODUCT_TAGS += dalvik.gc.type-precise
