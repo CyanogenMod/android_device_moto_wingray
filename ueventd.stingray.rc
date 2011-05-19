@@ -24,3 +24,4 @@
 /dev/qcqmi3	0640	radio	radio
 /dev/tegra_fuse	0660	system	system
 /dev/nvhdcp*    0660    system  system
+/dev/hidraw*    0600    radio   radio
