@@ -27,8 +27,16 @@ PRODUCT_COPY_FILES += \
     device/moto/wingray/init.stingray.rc:root/init.stingray.rc \
     device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc \
 
+
+ifeq ($(TARGET_PREBUILT_WIFI_MODULE),)
+LOCAL_WIFI_MODULE := device/moto/wingray/bcm4329.ko
+else
+LOCAL_WIFI_MODULE := $(TARGET_PREBUILT_WIFI_MODULE)
+endif
+
+
 PRODUCT_COPY_FILES += \
-    device/moto/wingray/bcm4329.ko:system/lib/modules/bcm4329.ko \
+    $(LOCAL_WIFI_MODULE):system/lib/modules/bcm4329.ko \
     device/moto/wingray/mXT1386_08_AA.bin:system/etc/firmware/mXT1386_08_AA.bin \
     device/moto/wingray/mXT1386_08_E1.bin:system/etc/firmware/mXT1386_08_E1.bin \
     device/moto/wingray/mXT1386_09_AA.bin:system/etc/firmware/mXT1386_09_AA.bin \
