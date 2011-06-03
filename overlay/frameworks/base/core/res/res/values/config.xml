@@ -67,14 +67,13 @@
         <item>"usb0"</item>
     </string-array>
 
-    <!-- Regex array of allowable upstream ifaces for tethering - for example if you want
-         tethering on a new interface called "foo2" add <item>"foo\\d"</item> to the array -->
-    <string-array translatable="false" name="config_tether_upstream_regexs">
-        <item>"ppp\\d"</item>
-        <item>"wlan\\d"</item>
-        <item>"rmnet\\d"</item>
-        <item>"qmi\\d"</item>
-    </string-array>
+    <!-- Array of allowable ConnectivityManager network types for tethering -->
+    <integer-array translatable = "false" name="config_tether_upstream_types">
+        <item>0</item>
+        <item>1</item>
+        <item>5</item>
+        <item>7</item>
+    </integer-array>
 
     <!-- List of regexpressions describing the interface (if any) that represent tetherable
          Wifi interfaces.  If the device doesn't want to support tethering over Wifi this
@@ -89,9 +88,6 @@
     <string-array translatable="false" name="config_tether_bluetooth_regexs">
         <item>"bnep\\d"</item>
     </string-array>
-
-    <!-- Boolean indicating if we require the use of DUN on mobile for tethering -->
-    <bool translatable="false" name="config_tether_dun_required">false</bool>
 
     <!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
     <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
