@@ -205,6 +205,9 @@
     <!-- This device does not allow sms service. -->
     <bool name="config_sms_capable">false</bool>
 
+    <!-- Enable puk unlockscreen -->
+    <bool name="config_enable_puk_unlock_screen">true</bool>
+
     <!-- Number of database connections opened and managed by framework layer
          to handle queries on each database. -->
     <integer name="db_connection_pool_size">3</integer>
