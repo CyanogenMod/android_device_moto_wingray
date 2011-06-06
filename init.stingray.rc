@@ -230,15 +230,13 @@ service locDrv /system/bin/brcm_guci_drv -config /system/etc/gpsconfig.xml
     group radio inet sdcard_rw
 
 service tcmd /system/bin/tcmd
-    class main
-    oneshot
+    class core
     socket local_tcmd stream 0660 root root
     socket batch_socket stream 0600 root root
     disabled
 
 service ftmipcd /system/bin/ftmipcd
-    class main
-    oneshot
+    class core
     disabled
 
 # Immediately drops to user radio, after starting the real-time thread
