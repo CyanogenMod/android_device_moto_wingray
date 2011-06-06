@@ -20,12 +20,11 @@ DEVICE=wingray
 MANUFACTURER=moto
 
 mkdir -p ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
+adb pull /system/app/AppDirectedSmsService.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/AppDirectedSmsService.apk
 adb pull /system/app/MotoImsServer.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoImsServer.apk
 adb pull /system/app/MotoLocationProxy.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoLocationProxy.apk
-adb pull /system/app/MotoLocationProxy.odex ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoLocationProxy.odex
 adb pull /system/app/MotoLteTelephony.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoLteTelephony.apk
 adb pull /system/app/MotoModemUtil.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoModemUtil.apk
-adb pull /system/app/MotoModemUtil.odex ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoModemUtil.odex
 adb pull /system/app/StingrayProgramMenu.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/StingrayProgramMenu.apk
 adb pull /system/app/StingrayProgramMenuSystem.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/StingrayProgramMenuSystem.apk
 adb pull /system/bin/akmd2 ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/akmd2
@@ -126,12 +125,11 @@ adb pull /system/vendor/firmware/fw_bcm4329_mfg.bin ../../../vendor/$MANUFACTURE
 
 # All the blobs necessary for wingray
 PRODUCT_COPY_FILES += \\
+    vendor/__MANUFACTURER__/__DEVICE__/proprietary/AppDirectedSmsService.apk:system/app/AppDirectedSmsService.apk \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoImsServer.apk:system/app/MotoImsServer.apk \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoLocationProxy.apk:system/app/MotoLocationProxy.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoLocationProxy.odex:system/app/MotoLocationProxy.odex \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoLteTelephony.apk:system/app/MotoLteTelephony.apk \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoModemUtil.apk:system/app/MotoModemUtil.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoModemUtil.odex:system/app/MotoModemUtil.odex \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/StingrayProgramMenu.apk:system/app/StingrayProgramMenu.apk \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/StingrayProgramMenuSystem.apk:system/app/StingrayProgramMenuSystem.apk \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/akmd2:system/bin/akmd2 \\
