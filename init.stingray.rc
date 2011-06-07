@@ -125,16 +125,12 @@ on boot
     chmod 220 /sys/class/radio/mdm6600/command
     chown radio radio /sys/bus/usb/devices/usb2/power/control
     chmod 660 /sys/bus/usb/devices/usb2/power/control
-# Disable USB SUSPEND/RESUME
-    write /sys/bus/usb/devices/usb2/power/control on
 
 # Modem Control LTE
     chown radio radio /sys/class/radio/wrigley/command
     chmod 220 /sys/class/radio/wrigley/command
     chown radio radio /sys/bus/usb/devices/usb1/power/control
     chmod 660 /sys/bus/usb/devices/usb1/power/control
-# Disable USB SUSPEND/RESUME
-    write /sys/bus/usb/devices/usb1/power/control on
 # Disable LP0 while we resolve issue
     write /d/suspend_mode lp1
 
