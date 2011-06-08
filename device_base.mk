@@ -21,6 +21,10 @@ PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=15
 
+# Set default USB interface
+ADDITIONAL_DEFAULT_PROPERTIES := \
+	persist.sys.usb.config=mtp
+
 include frameworks/base/build/tablet-dalvik-heap.mk
 
 PRODUCT_COPY_FILES += \
