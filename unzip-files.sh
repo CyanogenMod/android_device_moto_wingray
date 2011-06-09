@@ -125,13 +125,6 @@ unzip -j -o ../../../${DEVICE}_update.zip system/vendor/firmware/fw_bcm4329_mfg.
 
 # All the blobs necessary for wingray
 PRODUCT_COPY_FILES += \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/AppDirectedSmsService.apk:system/app/AppDirectedSmsService.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoImsServer.apk:system/app/MotoImsServer.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoLocationProxy.apk:system/app/MotoLocationProxy.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoLteTelephony.apk:system/app/MotoLteTelephony.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/MotoModemUtil.apk:system/app/MotoModemUtil.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/StingrayProgramMenu.apk:system/app/StingrayProgramMenu.apk \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/StingrayProgramMenuSystem.apk:system/app/StingrayProgramMenuSystem.apk \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/akmd2:system/bin/akmd2 \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/batch:system/bin/batch \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/brcm_guci_drv:system/bin/brcm_guci_drv \\
