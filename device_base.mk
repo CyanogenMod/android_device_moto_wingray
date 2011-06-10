@@ -29,6 +29,7 @@ include frameworks/base/build/tablet-dalvik-heap.mk
 
 PRODUCT_COPY_FILES += \
     device/moto/wingray/init.stingray.rc:root/init.stingray.rc \
+    device/moto/wingray/init.stingray.usb.rc:root/init.stingray.usb.rc \
     device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc \
 
 
