@@ -25,6 +25,7 @@ unzip -j -o ../../../${DEVICE}_update.zip system/app/MotoImsServer.apk -d ../../
 unzip -j -o ../../../${DEVICE}_update.zip system/app/MotoLocationProxy.apk -d ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
 unzip -j -o ../../../${DEVICE}_update.zip system/app/MotoLteTelephony.apk -d ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
 unzip -j -o ../../../${DEVICE}_update.zip system/app/MotoModemUtil.apk -d ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
+unzip -j -o ../../../${DEVICE}_update.zip system/app/MotoSimUiHelper.apk -d ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
 unzip -j -o ../../../${DEVICE}_update.zip system/app/StingrayProgramMenu.apk -d ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
 unzip -j -o ../../../${DEVICE}_update.zip system/app/StingrayProgramMenuSystem.apk -d ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
 unzip -j -o ../../../${DEVICE}_update.zip system/bin/akmd2 -d ../../../vendor/$MANUFACTURER/$DEVICE/proprietary
@@ -210,9 +211,12 @@ PRODUCT_PACKAGES += \\
     MotoLocationProxy \\
     MotoLteTelephony \\
     MotoModemUtil \\
+    MotoSimUiHelper \\
     StingrayProgramMenu \\
     StingrayProgramMenuSystem
+
 EOF
+
 (cat << EOF) | sed s/__DEVICE__/$DEVICE/g | sed s/__MANUFACTURER__/$MANUFACTURER/g > ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/Android.mk
 # Copyright (C) 2011 The Android Open Source Project
 #
@@ -288,6 +292,18 @@ include \$(BUILD_PREBUILT)
 include \$(CLEAR_VARS)
 
 LOCAL_MODULE := MotoModemUtil
+LOCAL_SRC_FILES := \$(LOCAL_MODULE).apk
+LOCAL_MODULE_CLASS := APPS
+LOCAL_MODULE_TAGS := optional
+LOCAL_CERTIFICATE := PRESIGNED
+LOCAL_MODULE_SUFFIX := \$(COMMON_ANDROID_PACKAGE_SUFFIX)
+include \$(BUILD_PREBUILT)
+
+# MotoSimUiHelper
+
+include \$(CLEAR_VARS)
+
+LOCAL_MODULE := MotoSimUiHelper
 LOCAL_SRC_FILES := \$(LOCAL_MODULE).apk
 LOCAL_MODULE_CLASS := APPS
 LOCAL_MODULE_TAGS := optional
