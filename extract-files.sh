@@ -25,6 +25,7 @@ adb pull /system/app/MotoImsServer.apk ../../../vendor/$MANUFACTURER/$DEVICE/pro
 adb pull /system/app/MotoLocationProxy.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoLocationProxy.apk
 adb pull /system/app/MotoLteTelephony.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoLteTelephony.apk
 adb pull /system/app/MotoModemUtil.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoModemUtil.apk
+adb pull /system/app/MotoSimUiHelper.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/MotoSimUiHelper.apk
 adb pull /system/app/StingrayProgramMenu.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/StingrayProgramMenu.apk
 adb pull /system/app/StingrayProgramMenuSystem.apk ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/StingrayProgramMenuSystem.apk
 adb pull /system/bin/akmd2 ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/akmd2
@@ -210,9 +211,12 @@ PRODUCT_PACKAGES += \\
     MotoLocationProxy \\
     MotoLteTelephony \\
     MotoModemUtil \\
+    MotoSimUiHelper \\
     StingrayProgramMenu \\
     StingrayProgramMenuSystem
+
 EOF
+
 (cat << EOF) | sed s/__DEVICE__/$DEVICE/g | sed s/__MANUFACTURER__/$MANUFACTURER/g > ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/Android.mk
 # Copyright (C) 2011 The Android Open Source Project
 #
@@ -288,6 +292,18 @@ include \$(BUILD_PREBUILT)
 include \$(CLEAR_VARS)
 
 LOCAL_MODULE := MotoModemUtil
+LOCAL_SRC_FILES := \$(LOCAL_MODULE).apk
+LOCAL_MODULE_CLASS := APPS
+LOCAL_MODULE_TAGS := optional
+LOCAL_CERTIFICATE := PRESIGNED
+LOCAL_MODULE_SUFFIX := \$(COMMON_ANDROID_PACKAGE_SUFFIX)
+include \$(BUILD_PREBUILT)
+
+# MotoSimUiHelper
+
+include \$(CLEAR_VARS)
+
+LOCAL_MODULE := MotoSimUiHelper
 LOCAL_SRC_FILES := \$(LOCAL_MODULE).apk
 LOCAL_MODULE_CLASS := APPS
 LOCAL_MODULE_TAGS := optional
