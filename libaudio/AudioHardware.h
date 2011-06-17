@@ -277,6 +277,9 @@ private:
         virtual status_t    setParameters(const String8& keyValuePairs);
         virtual String8     getParameters(const String8& keys);
         virtual unsigned int  getInputFramesLost() const;
+        virtual status_t    addAudioEffect(effect_handle_t effect);
+        virtual status_t    removeAudioEffect(effect_handle_t effect);
+
                 uint32_t    devices() { return mDevices; }
                 void        setDriver_l(bool mic, bool bluetooth, int sampleRate);
                 int         source() const { return mSource; }

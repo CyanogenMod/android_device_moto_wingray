@@ -1933,6 +1933,16 @@ void AudioHardware::AudioStreamInTegra::stop_l()
     LOGV("AudioStreamInTegra::stop_l() returns");
 }
 
+status_t AudioHardware::AudioStreamInTegra::addAudioEffect(effect_handle_t effect)
+{
+    return NO_ERROR;
+}
+
+status_t AudioHardware::AudioStreamInTegra::removeAudioEffect(effect_handle_t effect)
+{
+    return NO_ERROR;
+}
+
 // ----------------------------------------------------------------------------
 
 extern "C" AudioHardwareInterface* createAudioHardware(void) {
