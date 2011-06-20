@@ -19,6 +19,14 @@
 # product configuration (apps).
 #
 
+# A few more packages that aren't quite used on all builds
+PRODUCT_PACKAGES := \
+	HoloSpiralWallpaper \
+	LiveWallpapersPicker \
+	PhotoEditor \
+	VideoEditor \
+	VisualizationWallpapers \
+
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 # This is where we'd set a backup provider if we had one
