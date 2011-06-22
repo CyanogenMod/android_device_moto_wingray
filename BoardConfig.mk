@@ -78,7 +78,7 @@ ifneq ($(HAVE_NVIDIA_PROP_SRC),false)
 endif
 
 TARGET_RECOVERY_UI_LIB := librecovery_ui_stingray
-RECOVERY_24_BIT := true
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 
 # Avoid the generation of ldrcc instructions
 NEED_WORKAROUND_CORTEX_A9_745320 := true
