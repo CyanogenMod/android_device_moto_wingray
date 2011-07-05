@@ -278,6 +278,13 @@ service wrigley-diag /system/bin/wrigley-diag.sh
     oneshot
     disabled
 
+service logcatd-blan /system/bin/logcatd-blan
+    user root
+    # Immediately drops root, keeps CAP_SYS_ADMIN, and runs as below
+    # user system
+    # group system log inet
+    disabled
+
 on property:ro.bootmode=factorycable
     start tcmd
     start ftmipcd
@@ -291,6 +298,7 @@ on property:ro.bootmode=bp-tools
     start gadget-qbp-diag
     start gadget-qbp-modem
     start wrigley-diag
+    start logcatd-blan
     # MTU for USB tethering
     # TODO: Need a dynamic way to configure appropriate MTU
     write /sys/class/net/usb0/mtu 1428
