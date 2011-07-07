@@ -24,7 +24,6 @@ PRODUCT_PACKAGES := \
 	HoloSpiralWallpaper \
 	LiveWallpapersPicker \
 	PhotoEditor \
-	VideoEditor \
 	VisualizationWallpapers \
 
 # Inherit from those products. Most specific first.
