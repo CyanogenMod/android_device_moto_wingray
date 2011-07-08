@@ -23,8 +23,7 @@
 PRODUCT_PACKAGES := \
 	HoloSpiralWallpaper \
 	LiveWallpapersPicker \
-	PhotoEditor \
-	VisualizationWallpapers \
+	VisualizationWallpapers
 
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
