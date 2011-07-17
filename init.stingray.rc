@@ -135,8 +135,6 @@ on boot
     chmod 220 /sys/class/radio/wrigley/command
     chown radio radio /sys/bus/usb/devices/usb1/power/control
     chmod 660 /sys/bus/usb/devices/usb1/power/control
-# Disable LP0 while we resolve issue
-    write /d/suspend_mode lp1
 
 # Power Management Settings
     #write /sys/devices/platform/ohci.0/usb2/2-3/power/level auto
