@@ -1,3 +1,4 @@
+on early-init
     mount debugfs debugfs /sys/kernel/debug
 
     export EXTERNAL_STORAGE /mnt/sdcard
