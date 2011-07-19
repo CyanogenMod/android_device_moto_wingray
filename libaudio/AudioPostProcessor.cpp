@@ -694,7 +694,7 @@ bool AudioPostProcessor::EcnsThread::threadLoop()
             mClientBuf = 0;
         } else {
             half_done = false;
-            LOGD("%s: Read overflow (ECNS sanity preserved)", __FUNCTION__);
+            LOGV("%s: Read overflow (ECNS sanity preserved)", __FUNCTION__);
         }
         mEcnsReadLock.unlock();
         GETTIMEOFDAY(&mtv8, NULL);
