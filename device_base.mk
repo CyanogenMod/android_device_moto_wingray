@@ -32,16 +32,12 @@ PRODUCT_COPY_FILES += \
     device/moto/wingray/init.stingray.usb.rc:root/init.stingray.usb.rc \
     device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc \
 
-
-ifeq ($(TARGET_PREBUILT_WIFI_MODULE),)
-LOCAL_WIFI_MODULE := device/moto/wingray/bcm4329.ko
-else
-LOCAL_WIFI_MODULE := $(TARGET_PREBUILT_WIFI_MODULE)
+ifneq ($(TARGET_PREBUILT_WIFI_MODULE),)
+PRODUCT_COPY_FILES += \
+    $(TARGET_PREBUILT_WIFI_MODULE):system/lib/modules/bcm4329.ko
 endif
 
-
 PRODUCT_COPY_FILES += \
-    $(LOCAL_WIFI_MODULE):system/lib/modules/bcm4329.ko \
     device/moto/wingray/mXT1386_08_AA.bin:system/etc/firmware/mXT1386_08_AA.bin \
     device/moto/wingray/mXT1386_08_E1.bin:system/etc/firmware/mXT1386_08_E1.bin \
     device/moto/wingray/mXT1386_09_AA.bin:system/etc/firmware/mXT1386_09_AA.bin \
@@ -101,3 +97,5 @@ PRODUCT_COPY_FILES += \
 # inherit from the non-open-source side, if present
 $(call inherit-product-if-exists, vendor/moto/stingray/stingray-vendor.mk)
 
+WIFI_BAND := 802_11_ABG
+$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/device-bcm.mk)
