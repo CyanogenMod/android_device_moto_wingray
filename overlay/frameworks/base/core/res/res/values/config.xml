@@ -223,8 +223,4 @@
          in pages of size (in KB) indicated by this value -->
     <integer name="config_cursorWindowSize">2048</integer>
 
-    <!-- Path to an ISO image to be shared with via USB mass storage.
-         This image contains an installer for the AFT file transfer tool. -->
-    <string translatable="false" name="config_isoImagePath">/system/etc/AftInstallerImage.iso</string>
-
 </resources>
