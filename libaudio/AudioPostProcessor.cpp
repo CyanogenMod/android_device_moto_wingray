@@ -51,7 +51,7 @@ struct timeval mtv1, mtv2, mtv3, mtv4, mtv5, mtv6, mtv7, mtv8;
 namespace android_audio_legacy {
 
 AudioPostProcessor::AudioPostProcessor() :
-    mEcnsScratchBuf(0), mLogNumPoints(0),  mEcnsDlBuf(0), mEcnsThread(0)
+    mEcnsScratchBuf(0), mLogNumPoints(0),  mEcnsDlBuf(0), mEcnsDlBufSize(0), mEcnsThread(0)
 {
     LOGD("%s",__FUNCTION__);
 
@@ -74,7 +74,7 @@ AudioPostProcessor::~AudioPostProcessor()
 {
     if (mEcnsRunning) {
         LOGD("%s",__FUNCTION__);
-        enableEcns(false);
+        enableEcns(0);
     }
 }
 
@@ -137,16 +137,14 @@ void AudioPostProcessor::configMmAudio()
     }
 }
 
-void AudioPostProcessor::enableEcns(bool value)
+void AudioPostProcessor::enableEcns(int value)
 {
     if (mEcnsEnabled!=value) {
-        LOGD("enableEcns(%s)",value?"true":"false");
+        LOGD("enableEcns() new %08x old %08x)", value, mEcnsEnabled);
+        mEcnsThread->requestExitAndWait();
+        stopEcns();
+        cleanupEcns();
         mEcnsEnabled = value;
-        if (value==false) {
-            mEcnsThread->requestExitAndWait();
-            stopEcns();
-            cleanupEcns();
-        }
     }
 }
 
@@ -316,6 +314,17 @@ int AudioPostProcessor::writeDownlinkEcns(int fd, void * buffer, bool stereo,
                                           int bytes, Mutex *fdLock)
 {
     int written = 0;
+
+    // write directly to pcm out driver if only NS is enabled
+    if (!(mEcnsEnabled & AEC)) {
+        if (fd >= 0) {
+            fdLock->lock();
+            ::write(fd, buffer, bytes);
+            fdLock->unlock();
+        }
+        return bytes;
+    }
+
     mEcnsBufLock.lock();
     if (mEcnsEnabled && !mEcnsRunning) {
         long usecs = 20*1000;
@@ -388,86 +397,99 @@ int AudioPostProcessor::applyUplinkEcns(void * buffer, int bytes, int rate)
 
     if (!mEcnsRunning) {
         LOGE("EC/NS failed to init, read returns.");
-        return -1;
-    }
-
-    mEcnsBufLock.lock();
-    // Need a contiguous stereo playback buffer in the end.
-    if (bytes*2 != mEcnsDlBufSize || !mEcnsDlBuf) {
-        if (mEcnsDlBuf)
-            free(mEcnsDlBuf);
-        mEcnsDlBuf = (int16_t*)malloc(bytes*2);
-        if (mEcnsDlBuf)
-            mEcnsDlBufSize = bytes*2;
-    }
-    dl_buf = mEcnsDlBuf;
-    if (!dl_buf) {
-        mEcnsBufLock.unlock();
-        return -1;
-    }
-
-    // Need to gather appropriate amount of downlink speech.
-    // Take oldest scratch data first.  The scratch buffer holds fractions of buffers
-    // that were too small for processing.
-    if (mEcnsScratchBuf && mEcnsScratchBufSize) {
-        dl_buf_bytes = mEcnsScratchBufSize > bytes ? bytes:mEcnsScratchBufSize;
-        memcpy(dl_buf, mEcnsScratchBuf, dl_buf_bytes);
-        //LOGD("Took %d bytes from mEcnsScratchBuf", dl_buf_bytes);
-        mEcnsScratchBufSize -= dl_buf_bytes;
-        if (mEcnsScratchBufSize==0) {
-            // This should always be true.
-            free(mEcnsScratchBuf);
-            mEcnsScratchBuf = 0;
-            mEcnsScratchBufSize = 0;
-        }
-    }
-    // Take fresh data from write thread second.
-    if (dl_buf_bytes < bytes) {
-        int bytes_to_copy = mEcnsOutBufSize - mEcnsOutBufReadOffset;
-        bytes_to_copy = bytes_to_copy + dl_buf_bytes > bytes?
-                      bytes-dl_buf_bytes:bytes_to_copy;
-        if (bytes_to_copy) {
-            memcpy((void *)((unsigned int)dl_buf+dl_buf_bytes),
-                   (void *)((unsigned int)mEcnsOutBuf+mEcnsOutBufReadOffset),
-                   bytes_to_copy);
-            dl_buf_bytes += bytes_to_copy;
-        }
-        //LOGD("Took %d bytes from mEcnsOutBuf.  Need %d more.", bytes_to_copy,
-        //      bytes-dl_buf_bytes);
-        mEcnsOutBufReadOffset += bytes_to_copy;
-        if (mEcnsOutBufSize - mEcnsOutBufReadOffset < bytes) {
-            // We've depleted the output buffer, it's smaller than one uplink "frame".
-            // First take any unused data into scratch, then free the write thread.
-            if (mEcnsScratchBuf) {
-                LOGE("Memleak - coding error");
-                free(mEcnsScratchBuf);
-            }
-            if (mEcnsOutBufSize - mEcnsOutBufReadOffset > 0) {
-                if ((mEcnsScratchBuf=malloc(mEcnsOutBufSize - mEcnsOutBufReadOffset)) == 0) {
-                    LOGE("%s: Alloc failed, scratch data lost.",__FUNCTION__);
-                } else {
-                    mEcnsScratchBufSize = mEcnsOutBufSize - mEcnsOutBufReadOffset;
-                    //LOGD("....store %d bytes into scratch buf %p",
-                    //     mEcnsScratchBufSize, mEcnsScratchBuf);
-                    memcpy(mEcnsScratchBuf,
-                           (void *)((unsigned int)mEcnsOutBuf+mEcnsOutBufReadOffset),
-                           mEcnsScratchBufSize);
-                }
-            }
-            mEcnsOutBuf = 0;
-            mEcnsOutBufSize = 0;
-            mEcnsOutBufReadOffset = 0;
-            //LOGD("Signal write thread - need data.");
+        if (mEcnsEnabled & AEC) {
             mEcnsBufCond.signal();
         }
+        return -1;
     }
 
-    mEcnsBufLock.unlock();
+    // do not get downlink audio if only NS is enabled
+    if (mEcnsEnabled & AEC) {
+        mEcnsBufLock.lock();
+        // Need a contiguous stereo playback buffer in the end.
+        if (bytes*2 != mEcnsDlBufSize || !mEcnsDlBuf) {
+            if (mEcnsDlBuf)
+                free(mEcnsDlBuf);
+            mEcnsDlBuf = (int16_t*)malloc(bytes*2);
+            if (mEcnsDlBuf)
+                mEcnsDlBufSize = bytes*2;
+        }
+        dl_buf = mEcnsDlBuf;
+        if (!dl_buf) {
+            mEcnsBufLock.unlock();
+            return -1;
+        }
+
+        // Need to gather appropriate amount of downlink speech.
+        // Take oldest scratch data first.  The scratch buffer holds fractions of buffers
+        // that were too small for processing.
+        if (mEcnsScratchBuf && mEcnsScratchBufSize) {
+            dl_buf_bytes = mEcnsScratchBufSize > bytes ? bytes:mEcnsScratchBufSize;
+            memcpy(dl_buf, mEcnsScratchBuf, dl_buf_bytes);
+            //LOGD("Took %d bytes from mEcnsScratchBuf", dl_buf_bytes);
+            mEcnsScratchBufSize -= dl_buf_bytes;
+            if (mEcnsScratchBufSize==0) {
+                // This should always be true.
+                free(mEcnsScratchBuf);
+                mEcnsScratchBuf = 0;
+                mEcnsScratchBufSize = 0;
+            }
+        }
+        // Take fresh data from write thread second.
+        if (dl_buf_bytes < bytes) {
+            int bytes_to_copy = mEcnsOutBufSize - mEcnsOutBufReadOffset;
+            bytes_to_copy = bytes_to_copy + dl_buf_bytes > bytes?
+                          bytes-dl_buf_bytes:bytes_to_copy;
+            if (bytes_to_copy) {
+                memcpy((void *)((unsigned int)dl_buf+dl_buf_bytes),
+                       (void *)((unsigned int)mEcnsOutBuf+mEcnsOutBufReadOffset),
+                       bytes_to_copy);
+                dl_buf_bytes += bytes_to_copy;
+            }
+            //LOGD("Took %d bytes from mEcnsOutBuf.  Need %d more.", bytes_to_copy,
+            //      bytes-dl_buf_bytes);
+            mEcnsOutBufReadOffset += bytes_to_copy;
+            if (mEcnsOutBufSize - mEcnsOutBufReadOffset < bytes) {
+                // We've depleted the output buffer, it's smaller than one uplink "frame".
+                // First take any unused data into scratch, then free the write thread.
+                if (mEcnsScratchBuf) {
+                    LOGE("Memleak - coding error");
+                    free(mEcnsScratchBuf);
+                }
+                if (mEcnsOutBufSize - mEcnsOutBufReadOffset > 0) {
+                    if ((mEcnsScratchBuf=malloc(mEcnsOutBufSize - mEcnsOutBufReadOffset)) == 0) {
+                        LOGE("%s: Alloc failed, scratch data lost.",__FUNCTION__);
+                    } else {
+                        mEcnsScratchBufSize = mEcnsOutBufSize - mEcnsOutBufReadOffset;
+                        //LOGD("....store %d bytes into scratch buf %p",
+                        //     mEcnsScratchBufSize, mEcnsScratchBuf);
+                        memcpy(mEcnsScratchBuf,
+                               (void *)((unsigned int)mEcnsOutBuf+mEcnsOutBufReadOffset),
+                               mEcnsScratchBufSize);
+                    }
+                }
+                mEcnsOutBuf = 0;
+                mEcnsOutBufSize = 0;
+                mEcnsOutBufReadOffset = 0;
+                //LOGD("Signal write thread - need data.");
+                mEcnsBufCond.signal();
+            }
+        }
+
+        LOGV_IF(dl_buf_bytes < bytes, "%s:EC/NS Starved for downlink data. have %d need %d.",
+             __FUNCTION__,dl_buf_bytes, bytes);
+
+        mEcnsBufLock.unlock();
+    } else {
+        if (mEcnsDlBufSize < bytes * 2) {
+           mEcnsDlBufSize = bytes * 2;
+           mEcnsDlBuf = (int16_t *)realloc(mEcnsDlBuf, mEcnsDlBufSize);
+        }
+        dl_buf = mEcnsDlBuf;
+    }
 
     // Pad downlink with zeroes as last resort.  We have to process the UL speech.
     if (dl_buf_bytes < bytes) {
-        LOGV("%s:EC/NS Starved for downlink data. have %d need %d.",
-             __FUNCTION__,dl_buf_bytes, bytes);
         memset(&dl_buf[dl_buf_bytes/sizeof(int16_t)],
                0,
                bytes-dl_buf_bytes);
@@ -476,25 +498,29 @@ int AudioPostProcessor::applyUplinkEcns(void * buffer, int bytes, int rate)
     // Do Echo Cancellation
     GETTIMEOFDAY(&mtv4, NULL);
     API_MOT_LOG_RESET(&mEcnsCtrl, &mMemBlocks);
-    API_MOT_DOWNLINK(&mEcnsCtrl, &mMemBlocks, (int16*)dl_buf, (int16*)ul_buf, &(ul_gbuff2[0]));
+    if (mEcnsEnabled & AEC) {
+        API_MOT_DOWNLINK(&mEcnsCtrl, &mMemBlocks, (int16*)dl_buf, (int16*)ul_buf, &(ul_gbuff2[0]));
+    }
     API_MOT_UPLINK(&mEcnsCtrl, &mMemBlocks, (int16*)dl_buf, (int16*)ul_buf, &(ul_gbuff2[0]));
 
     // Playback the echo-cancelled speech to driver.
     // Include zero padding.  Our echo canceller needs a consistent path.
-    if (mEcnsOutStereo) {
-        // Convert up to stereo, in place.
-        for (int i = bytes/2-1; i >= 0; i--) {
-            dl_buf[i*2] = dl_buf[i];
-            dl_buf[i*2+1] = dl_buf[i];
+    if (mEcnsEnabled & AEC) {
+        if (mEcnsOutStereo) {
+            // Convert up to stereo, in place.
+            for (int i = bytes/2-1; i >= 0; i--) {
+                dl_buf[i*2] = dl_buf[i];
+                dl_buf[i*2+1] = dl_buf[i];
+            }
+            dl_buf_bytes *= 2;
         }
-        dl_buf_bytes *= 2;
-    }
-    GETTIMEOFDAY(&mtv5, NULL);
-    if (mEcnsOutFd != -1) {
-        mEcnsOutFdLockp->lock();
-        ::write(mEcnsOutFd, &dl_buf[0],
-                bytes*(mEcnsOutStereo?2:1));
-        mEcnsOutFdLockp->unlock();
+        GETTIMEOFDAY(&mtv5, NULL);
+        if (mEcnsOutFd != -1) {
+            mEcnsOutFdLockp->lock();
+            ::write(mEcnsOutFd, &dl_buf[0],
+                    bytes*(mEcnsOutStereo?2:1));
+            mEcnsOutFdLockp->unlock();
+        }
     }
     // Do the CTO SuperAPI internal logging.
     // (Do this after writing output to avoid adding latency.)
@@ -660,6 +686,7 @@ bool AudioPostProcessor::EcnsThread::threadLoop()
     struct timeval tv1, tv2;
     int  usecs;
     bool half_done = false;
+    int ecnsStatus = 0;
 
     LOGD("%s: Enter thread loop size %d rate %d", __FUNCTION__,
                                           mReadSize, mRate);
@@ -668,13 +695,15 @@ bool AudioPostProcessor::EcnsThread::threadLoop()
     if (!mReadBuf)
         goto error;
 
-    while (mProcessor->isEcnsEnabled()) {
+    while (!exitPending() && ecnsStatus != -1) {
         GETTIMEOFDAY(&mtv1, NULL);
         if (!half_done)
             ret1 = ::read(mFd, mReadBuf, mReadSize/2);
+        if(exitPending())
+            goto error;
         GETTIMEOFDAY(&mtv2, NULL);
         ret2 = ::read(mFd, (char *)mReadBuf+mReadSize/2, mReadSize/2);
-        if(!mProcessor->isEcnsEnabled())
+        if(exitPending())
             goto error;
         if (ret1 <= 0 || ret2 <= 0) {
             LOGE("%s: Problem reading.", __FUNCTION__);
@@ -682,7 +711,7 @@ bool AudioPostProcessor::EcnsThread::threadLoop()
         }
         GETTIMEOFDAY(&mtv3, NULL);
         mEcnsReadLock.lock();
-        mProcessor->applyUplinkEcns(mReadBuf, mReadSize, mRate);
+        ecnsStatus = mProcessor->applyUplinkEcns(mReadBuf, mReadSize, mRate);
         if (mClientBuf && mReadSize) {
             // Give the buffer to the client.
             memcpy(mClientBuf, mReadBuf, mReadSize);

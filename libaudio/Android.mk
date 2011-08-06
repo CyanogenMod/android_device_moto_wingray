@@ -46,6 +46,9 @@ LOCAL_SHARED_LIBRARIES += libdl
 LOCAL_SRC_FILES += \
     AudioHardware.cpp
 
+LOCAL_C_INCLUDES += \
+    system/media/audio_effects/include
+
 LOCAL_CFLAGS += -fno-short-enums
 
 LOCAL_STATIC_LIBRARIES := \

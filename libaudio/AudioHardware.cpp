@@ -31,6 +31,8 @@
 
 #include "AudioHardware.h"
 #include <media/AudioRecord.h>
+#include <audio_effects/effect_aec.h>
+#include <audio_effects/effect_ns.h>
 
 namespace android_audio_legacy {
 const uint32_t AudioHardware::inputSamplingRates[] = {
@@ -54,7 +56,7 @@ AudioHardware::AudioHardware() :
     mOutput(0), /*mCurOut/InDevice*/ mCpcapCtlFd(-1), mHwOutRate(0), mHwInRate(0),
     mMasterVol(1.0), mVoiceVol(1.0),
     /*mCpcapGain*/
-    mSpkrVolume(-1), mMicVolume(-1), mEcnsEnabled(false), mBtScoOn(false)
+    mSpkrVolume(-1), mMicVolume(-1), mEcnsEnabled(0), mEcnsRequested(0), mBtScoOn(false)
 {
     LOGV("AudioHardware constructor");
 }
@@ -681,14 +683,12 @@ status_t AudioHardware::doRouting_l()
              mCurOutDevice.on ? "on" : "off");
     }
 
-    mEcnsEnabled = false;
     // enable EC if:
-    // - the audio mode is IN_CALL or IN_COMMUNICATION  AND
-    // - the output stream is active AND
-    // - an input stream with VOICE_COMMUNICATION source is active
-    if (isInCall() && !mOutput->getStandby() &&
-        input && input->source() == AUDIO_SOURCE_VOICE_COMMUNICATION) {
-        mEcnsEnabled = true;
+    // - mEcnsRequested AND
+    // - the output stream is active
+    mEcnsEnabled = mEcnsRequested;
+    if (mOutput->getStandby()) {
+        mEcnsEnabled &= ~AudioPostProcessor::AEC;
     }
 
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
@@ -696,7 +696,12 @@ status_t AudioHardware::doRouting_l()
     // Check input/output rates for HW.
     if (mEcnsEnabled) {
         mHwInRate = ecnsRate;
-        mHwOutRate = mHwInRate;
+        // rx path is altered only if AEC is enabled
+        if (mEcnsEnabled & AudioPostProcessor::AEC) {
+            mHwOutRate = mHwInRate;
+        } else {
+            mHwOutRate = AUDIO_HW_OUT_SAMPLERATE;
+        }
         LOGD("EC/NS active, requests rate as %d for in/out", mHwInRate);
     }
     else
@@ -745,10 +750,10 @@ status_t AudioHardware::doRouting_l()
     if (btScoOn != mBtScoOn) {
         if (input) {
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
-        if (mEcnsEnabled) {
-            mAudioPP.enableEcns(false);
-            mAudioPP.enableEcns(true);
-        }
+            if (mEcnsEnabled) {
+                mAudioPP.enableEcns(0);
+                mAudioPP.enableEcns(mEcnsEnabled);
+            }
 #endif
             input->lockFd();
             input->stop_l();
@@ -855,6 +860,15 @@ AudioHardware::AudioStreamInTegra *AudioHardware::getActiveInput_l()
     }
 
     return NULL;
+}
+
+void AudioHardware::setEcnsRequested_l(int ecns, bool enabled)
+{
+    if (enabled) {
+        mEcnsRequested |= ecns;
+    } else {
+        mEcnsRequested &= ~ecns;
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -1145,7 +1159,7 @@ ssize_t AudioHardware::AudioStreamOutTegra::write(const void* buffer, size_t byt
             mSrc.deinit();
         }
 
-        if (mHardware->mAudioPP.isEcnsEnabled() || mSrc.initted())
+        if (mHardware->mAudioPP.isEcEnabled() || mSrc.initted())
         {
             // cut audio down to Mono for SRC or ECNS
             if (channels() == AudioSystem::CHANNEL_OUT_STEREO)
@@ -1184,7 +1198,7 @@ ssize_t AudioHardware::AudioStreamOutTegra::write(const void* buffer, size_t byt
             outsize = mSrc.mIoData.output_count*2;
             LOGV("Outsize is now %d", outsize);
         }
-        if (mHardware->mAudioPP.isEcnsEnabled()) {
+        if (mHardware->mAudioPP.isEcEnabled()) {
             // EC/NS is a blocking interface, to synchronise with read.
             // It also consumes data when EC/NS is running.
             // It expects MONO data.
@@ -1199,7 +1213,7 @@ ssize_t AudioHardware::AudioStreamOutTegra::write(const void* buffer, size_t byt
                                                             stereo, outsize, &mFdLock);
             mLocked = false;
         }
-        if (mHardware->mAudioPP.isEcnsEnabled() || mSrc.initted()) {
+        if (mHardware->mAudioPP.isEcEnabled() || mSrc.initted()) {
             // Move audio back up to Stereo, if the EC/NS wasn't in fact running and we're
             // writing to a stereo device.
             if (stereo &&
@@ -1294,9 +1308,7 @@ status_t AudioHardware::AudioStreamOutTegra::online_l()
             LOGV("output %p going online", this);
             mState = AUDIO_STREAM_CONFIG_REQ;
             // update EC state if necessary
-            AudioStreamInTegra *input = mHardware->getActiveInput_l();
-            if (mHardware->isInCall() &&
-                input && input->source() == AUDIO_SOURCE_VOICE_COMMUNICATION) {
+            if (mHardware->getActiveInput_l() && mHardware->isEcRequested()) {
                 // doRouting_l() will not try to lock mLock when calling setDriver_l()
                 mLocked = true;
                 mHardware->doRouting_l();
@@ -1373,9 +1385,7 @@ status_t AudioHardware::AudioStreamOutTegra::standby()
         mState = AUDIO_STREAM_IDLE;
 
         // update EC state if necessary
-        AudioStreamInTegra *input = mHardware->getActiveInput_l();
-        if (mHardware->isInCall() &&
-            input && input->source() == AUDIO_SOURCE_VOICE_COMMUNICATION) {
+        if (mHardware->getActiveInput_l() && mHardware->isEcRequested()) {
             // doRouting_l will not try to lock mLock when calling setDriver_l()
             mLocked = true;
             mHardware->doRouting_l();
@@ -1490,7 +1500,7 @@ AudioHardware::AudioStreamInTegra::AudioStreamInTegra() :
     mAcoustics((AudioSystem::audio_in_acoustics)0), mDevices(0),
     mIsMicEnabled(0), mIsBtEnabled(0),
     mSource(AUDIO_SOURCE_DEFAULT), mLocked(false), mTotalBuffersRead(0),
-    mDriverRate(AUDIO_HW_IN_SAMPLERATE)
+    mDriverRate(AUDIO_HW_IN_SAMPLERATE), mEcnsRequested(0)
 {
     LOGV("AudioStreamInTegra constructor");
 }
@@ -1719,6 +1729,8 @@ status_t AudioHardware::AudioStreamInTegra::standby()
     if (mState != AUDIO_STREAM_IDLE) {
         LOGV("input %p going into standby", this);
         mState = AUDIO_STREAM_IDLE;
+        // reset global pre processing state before disabling the input
+        mHardware->setEcnsRequested_l(AudioPostProcessor::AEC|AudioPostProcessor::NS, false);
         // setDriver_l() will not try to lock mLock when called by doRouting_l()
         mLocked = true;
         mHardware->doRouting_l();
@@ -1756,6 +1768,8 @@ status_t AudioHardware::AudioStreamInTegra::online_l()
         if (mState == AUDIO_STREAM_IDLE) {
             mState = AUDIO_STREAM_CONFIG_REQ;
             LOGV("input %p going online", this);
+            // apply pre processing requested for this input
+            mHardware->setEcnsRequested_l(mEcnsRequested, true);
             // setDriver_l() will not try to lock mLock when called by doRouting_l()
             mLocked = true;
             mHardware->doRouting_l();
@@ -1808,8 +1822,8 @@ void AudioHardware::AudioStreamInTegra::reopenReconfigDriver()
 {
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
     if (mHardware->mEcnsEnabled) {
-        mHardware->mAudioPP.enableEcns(false);
-        mHardware->mAudioPP.enableEcns(true);
+        mHardware->mAudioPP.enableEcns(0);
+        mHardware->mAudioPP.enableEcns(mHardware->mEcnsEnabled);
     }
 #endif
     // Need to "restart" the driver when changing the buffer configuration.
@@ -1950,13 +1964,39 @@ void AudioHardware::AudioStreamInTegra::stop_l()
     LOGV("AudioStreamInTegra::stop_l() returns");
 }
 
+void AudioHardware::AudioStreamInTegra::updateEcnsRequested(effect_handle_t effect, bool enabled)
+{
+#ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
+    effect_descriptor_t desc;
+    status_t status = (*effect)->get_descriptor(effect, &desc);
+    if (status == 0) {
+        int ecns = 0;
+        if (memcmp(&desc.type, FX_IID_AEC, sizeof(effect_uuid_t)) == 0) {
+            ecns = AudioPostProcessor::AEC;
+        } else if (memcmp(&desc.type, FX_IID_NS, sizeof(effect_uuid_t)) == 0) {
+            ecns = AudioPostProcessor::NS;
+        }
+        LOGV("AudioStreamInTegra::updateEcnsRequested() %s effect %s",
+             enabled ? "enabling" : "disabling", desc.name);
+        if (enabled) {
+            mEcnsRequested |= ecns;
+        } else {
+            mEcnsRequested &= ~ecns;
+        }
+        standby();
+    }
+#endif
+}
+
 status_t AudioHardware::AudioStreamInTegra::addAudioEffect(effect_handle_t effect)
 {
+    updateEcnsRequested(effect, true);
     return NO_ERROR;
 }
 
 status_t AudioHardware::AudioStreamInTegra::removeAudioEffect(effect_handle_t effect)
 {
+    updateEcnsRequested(effect, false);
     return NO_ERROR;
 }
 

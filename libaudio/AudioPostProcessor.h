@@ -44,12 +44,20 @@ public:
             void        doMmProcessing(void * buffer, int numSamples);
             int         getEcnsRate(void);
 
-            void        enableEcns(bool value);
+            // voice processing IDs for enableEcns()
+            enum {
+                AEC = 0x1,   // AEC is enabled
+                NS = 0x2     // NS is enabled
+            };
+            // enable or disable voice processing according to bit field passed
+            void        enableEcns(int value);
+            bool        isEcnsEnabled(void) { return (mEcnsEnabled != 0); }
+            bool        isEcEnabled(void) { return !!(mEcnsEnabled & AEC); }
+
             int         writeDownlinkEcns(int fd, void * buffer,
                                           bool stereo, int bytes, Mutex * fdLockp);
             int         read(int fd, void * buffer, int bytes, int rate);
             int         applyUplinkEcns(void * buffer, int bytes, int rate);
-            bool        isEcnsEnabled(void) { return mEcnsEnabled; };
 
 private:
             void        configMmAudio(void);
@@ -75,7 +83,7 @@ private:
         // EC/NS configuration etc.
             Mutex       mEcnsBufLock;
             Condition   mEcnsBufCond;  // Signal to unblock write thread
-            bool        mEcnsEnabled; // Enabled by libaudio
+            int         mEcnsEnabled; // Enabled by libaudio
             bool        mEcnsRunning; // ECNS module init done by read thread
             int         mEcnsRate;
             void *      mEcnsScratchBuf;  // holding cell for downlink speech "consumed".
