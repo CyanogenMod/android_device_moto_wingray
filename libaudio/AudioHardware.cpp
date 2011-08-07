@@ -1336,6 +1336,23 @@ status_t AudioHardware::AudioStreamOutTegra::online_l()
 
     mDriverRate = mHardware->mHwOutRate;
 
+    // If EC is on, pre load one DMA buffer with 20ms of silence to limit underruns
+    if (mHardware->mEcnsEnabled) {
+        int fd = -1;
+        if (mIsBtEnabled) {
+            fd = mBtFd;
+        } else if (mIsSpkrEnabled) {
+            fd = mFd;
+        }
+        if (fd >= 0) {
+            size_t bufSize = (mDriverRate * 2 /* stereo */ * sizeof(int16_t))/ 50;
+            char buf[bufSize];
+            memset(buf, 0, bufSize);
+            Mutex::Autolock lock2(mFdLock);
+            ::write(fd, buf, bufSize);
+        }
+    }
+
     mState = AUDIO_STREAM_CONFIGURED;
 
     return status;
