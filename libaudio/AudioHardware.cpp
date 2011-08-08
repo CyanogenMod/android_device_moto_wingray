@@ -688,7 +688,7 @@ status_t AudioHardware::doRouting_l()
     // - the output stream is active
     mEcnsEnabled = mEcnsRequested;
     if (mOutput->getStandby()) {
-        mEcnsEnabled &= ~AudioPostProcessor::AEC;
+        mEcnsEnabled &= ~PREPROC_AEC;
     }
 
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
@@ -697,7 +697,7 @@ status_t AudioHardware::doRouting_l()
     if (mEcnsEnabled) {
         mHwInRate = ecnsRate;
         // rx path is altered only if AEC is enabled
-        if (mEcnsEnabled & AudioPostProcessor::AEC) {
+        if (mEcnsEnabled & PREPROC_AEC) {
             mHwOutRate = mHwInRate;
         } else {
             mHwOutRate = AUDIO_HW_OUT_SAMPLERATE;
@@ -1678,7 +1678,7 @@ ssize_t AudioHardware::AudioStreamInTegra::read(void* buffer, ssize_t bytes)
         }
         {
             Mutex::Autolock dfl(mFdLock);
-            ret = ::read(mFd, buffer, hwReadBytes);
+            ret = ::read(mFd, buffer, bytes);
         }
 #endif
 
@@ -1730,7 +1730,7 @@ status_t AudioHardware::AudioStreamInTegra::standby()
         LOGV("input %p going into standby", this);
         mState = AUDIO_STREAM_IDLE;
         // reset global pre processing state before disabling the input
-        mHardware->setEcnsRequested_l(AudioPostProcessor::AEC|AudioPostProcessor::NS, false);
+        mHardware->setEcnsRequested_l(PREPROC_AEC|PREPROC_NS, false);
         // setDriver_l() will not try to lock mLock when called by doRouting_l()
         mLocked = true;
         mHardware->doRouting_l();
@@ -1972,9 +1972,9 @@ void AudioHardware::AudioStreamInTegra::updateEcnsRequested(effect_handle_t effe
     if (status == 0) {
         int ecns = 0;
         if (memcmp(&desc.type, FX_IID_AEC, sizeof(effect_uuid_t)) == 0) {
-            ecns = AudioPostProcessor::AEC;
+            ecns = PREPROC_AEC;
         } else if (memcmp(&desc.type, FX_IID_NS, sizeof(effect_uuid_t)) == 0) {
-            ecns = AudioPostProcessor::NS;
+            ecns = PREPROC_NS;
         }
         LOGV("AudioStreamInTegra::updateEcnsRequested() %s effect %s",
              enabled ? "enabling" : "disabling", desc.name);

@@ -137,9 +137,19 @@ public:
     // added by AudioHardware
                status_t    init();
 
-               void        setEcnsRequested_l(int ecns, bool enabled);
-               bool        isEcRequested() { return !!(mEcnsRequested & AudioPostProcessor::AEC); }
+               // voice processing IDs for mEcnsRequested and mEcnsEnabled
+               enum {
+#ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
+                   PREPROC_AEC = AudioPostProcessor::AEC,   // AEC is enabled
+                   PREPROC_NS = AudioPostProcessor::NS,     // NS is enabled
+#else
+                   PREPROC_AEC = 0x1,                       // AEC is enabled
+                   PREPROC_NS = 0x2,                        // NS is enabled
+#endif
+               };
 
+               void        setEcnsRequested_l(int ecns, bool enabled);
+               bool        isEcRequested() { return !!(mEcnsRequested & PREPROC_AEC); }
 protected:
     // AudioHardwareBase provides default implementation
     //virtual  bool        isModeInCall(int mode);
