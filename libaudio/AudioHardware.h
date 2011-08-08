@@ -137,6 +137,9 @@ public:
     // added by AudioHardware
                status_t    init();
 
+               void        setEcnsRequested_l(int ecns, bool enabled);
+               bool        isEcRequested() { return !!(mEcnsRequested & AudioPostProcessor::AEC); }
+
 protected:
     // AudioHardwareBase provides default implementation
     //virtual  bool        isModeInCall(int mode);
@@ -147,6 +150,7 @@ protected:
 
     // added by AudioHardware
                 int        getActiveInputRate();
+
 
 private:
 
@@ -292,6 +296,7 @@ private:
 
     private:
                 void        reopenReconfigDriver();
+                void        updateEcnsRequested(effect_handle_t effect, bool enabled);
 
                 AudioHardware* mHardware;
                 Mutex       mLock;
@@ -320,6 +325,7 @@ private:
         mutable Mutex       mFramesLock;
                 Mutex       mFdLock;
                 bool        mSleepReq;
+                int         mEcnsRequested;   // bit field indicating if AEC and/or NS are requested
     };
 
             static const uint32_t inputSamplingRates[];
@@ -349,7 +355,9 @@ private:
 #endif
             int mSpkrVolume;
             int mMicVolume;
-            bool mEcnsEnabled;
+
+            int mEcnsEnabled;   // bit field indicating if AEC and/or NS are enabled
+            int mEcnsRequested; // bit field indicating if AEC and/or NS are requested
             bool mBtScoOn;
 };
 
