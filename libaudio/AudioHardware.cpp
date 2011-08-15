@@ -1729,6 +1729,11 @@ status_t AudioHardware::AudioStreamInTegra::standby()
     if (mState != AUDIO_STREAM_IDLE) {
         LOGV("input %p going into standby", this);
         mState = AUDIO_STREAM_IDLE;
+        // stopping capture now so that the input stream state (AUDIO_STREAM_IDLE)
+        // is consistent with the driver state when doRouting_l() is executed.
+        // Not doing so makes that I2S reconfiguration fails  when switching from
+        // BT SCO to built-in mic.
+        stop_l();
         // reset global pre processing state before disabling the input
         mHardware->setEcnsRequested_l(PREPROC_AEC|PREPROC_NS, false);
         // setDriver_l() will not try to lock mLock when called by doRouting_l()
