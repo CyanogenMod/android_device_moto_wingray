@@ -15,8 +15,8 @@ on early-init
 on fs
     mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/system /system wait ro
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
-    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/userdata /data wait noatime nosuid nodev nodelalloc
-    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/cache /cache wait noatime nosuid nodev nodelalloc
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/userdata /data wait noatime nosuid nodev nomblk_io_submit
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/cache /cache wait noatime nosuid nodev nomblk_io_submit
     mount ext2 /dev/block/platform/sdhci-tegra.3/by-name/pdsb /pds wait ro
     setprop ro.crypto.fuse_sdcard true
 
