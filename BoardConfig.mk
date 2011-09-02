@@ -31,9 +31,6 @@
 USE_CAMERA_STUB := true
 USE_PROPRIETARY_AUDIO_EXTENSIONS := false
 
-# Use a smaller subset of system fonts to keep image size lower
-SMALLER_FONT_FOOTPRINT := true
-
 # inherit from the proprietary version
 # needed for BP-flashing updater extensions
 -include vendor/moto/stingray/BoardConfigVendor.mk
