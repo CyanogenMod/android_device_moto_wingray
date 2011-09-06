@@ -83,9 +83,6 @@ PRODUCT_PACKAGES := \
 
 PRODUCT_CHARACTERISTICS := tablet
 
-# Use a smaller subset of system fonts to keep image size lower
-SMALLER_FONT_FOOTPRINT := true
-
 # we have enough storage space to hold precise GC data
 PRODUCT_TAGS += dalvik.gc.type-precise
 
