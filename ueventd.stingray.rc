@@ -25,3 +25,6 @@
 /dev/tegra_fuse	0660	system	system
 /dev/nvhdcp*    0660    system  system
 /dev/hidraw*    0600    radio   radio
+
+#sysfs properties
+/sys/devices/platform/tegra-ehci.2/usb2/* remove 0220 radio radio
