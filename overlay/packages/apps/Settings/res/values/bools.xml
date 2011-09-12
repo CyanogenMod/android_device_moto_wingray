@@ -17,6 +17,4 @@
 <resources>
     <!-- No powercontrol widget for tablets -->
     <bool name="has_powercontrol_widget">false</bool>
-    <!-- Whether it has a notification led that can be enabled/disabled -->
-    <bool name="has_intrusive_led">true</bool>
 </resources>
