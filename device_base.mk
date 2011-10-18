@@ -80,7 +80,8 @@ PRODUCT_PACKAGES := \
     l2ping \
     hcitool \
     bttest \
-    com.android.future.usb.accessory
+    com.android.future.usb.accessory \
+    whisperd
 
 PRODUCT_CHARACTERISTICS := tablet
 
