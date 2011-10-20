@@ -184,7 +184,7 @@ void AudioPostProcessor::setAudioDev(struct cpcap_audio_stream *outDev,
         stopEcns();
     }
 
-    LOGV("setAudioDev %d", outDev->id);
+    ALOGV("setAudioDev %d", outDev->id);
     if (mm_accy != mAudioMmEnvVar.accy) {
         mAudioMmEnvVar.accy = mm_accy;
         configMmAudio();
@@ -329,7 +329,7 @@ int AudioPostProcessor::writeDownlinkEcns(int fd, void * buffer, bool stereo,
     if (mEcnsEnabled && !mEcnsRunning) {
         long usecs = 20*1000;
         // Give the read thread a chance to catch up.
-        LOGV("%s: delay %d msecs for ec/ns to start",__FUNCTION__, (int)(usecs/1000));
+        ALOGV("%s: delay %d msecs for ec/ns to start",__FUNCTION__, (int)(usecs/1000));
         mEcnsBufLock.unlock();
         usleep(usecs);
         mEcnsBufLock.lock();
@@ -382,7 +382,7 @@ int AudioPostProcessor::applyUplinkEcns(void * buffer, int bytes, int rate)
     if (!mEcnsEnabled)
         return 0;
 
-    LOGV("%s %d bytes at %d Hz",__FUNCTION__, bytes, rate);
+    ALOGV("%s %d bytes at %d Hz",__FUNCTION__, bytes, rate);
     if (mEcnsEnabled && !mEcnsRunning) {
         initEcns(rate, bytes);
         onetime=true;
@@ -476,7 +476,7 @@ int AudioPostProcessor::applyUplinkEcns(void * buffer, int bytes, int rate)
             }
         }
 
-        LOGV_IF(dl_buf_bytes < bytes, "%s:EC/NS Starved for downlink data. have %d need %d.",
+        ALOGV_IF(dl_buf_bytes < bytes, "%s:EC/NS Starved for downlink data. have %d need %d.",
              __FUNCTION__,dl_buf_bytes, bytes);
 
         mEcnsBufLock.unlock();
@@ -626,9 +626,9 @@ int AudioPostProcessor::read_dock_prop(char const *path)
 	    return -EINVAL;
         }
         close(fd);
-        LOGV("buffer = %s, spkr_dock_prop = 0x%lX", buffer, spkr_dock_prop);
+        ALOGV("buffer = %s, spkr_dock_prop = 0x%lX", buffer, spkr_dock_prop);
         spkr_dock_prop = spkr_dock_prop ^ basic_dock_prop;
-        LOGV("dock_prop returned = %lX", spkr_dock_prop);
+        ALOGV("dock_prop returned = %lX", spkr_dock_prop);
         return spkr_dock_prop;
     } else {
         if (already_warned == -1) {
@@ -654,7 +654,7 @@ AudioPostProcessor::EcnsThread::~EcnsThread()
 int AudioPostProcessor::EcnsThread::readData(int fd, void * buffer, int bytes, int rate,
                                              AudioPostProcessor * pp)
 {
-    LOGV("%s: read %d bytes at %d rate", __FUNCTION__, bytes, rate);
+    ALOGV("%s: read %d bytes at %d rate", __FUNCTION__, bytes, rate);
     Mutex::Autolock lock(mEcnsReadLock);
     mProcessor = pp;
     mFd = fd;
@@ -723,7 +723,7 @@ bool AudioPostProcessor::EcnsThread::threadLoop()
             mClientBuf = 0;
         } else {
             half_done = false;
-            LOGV("%s: Read overflow (ECNS sanity preserved)", __FUNCTION__);
+            ALOGV("%s: Read overflow (ECNS sanity preserved)", __FUNCTION__);
         }
         mEcnsReadLock.unlock();
         GETTIMEOFDAY(&mtv8, NULL);
