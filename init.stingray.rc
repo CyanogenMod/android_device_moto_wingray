@@ -213,7 +213,7 @@ service iprenew_bnep0 /system/bin/dhcpcd -n
 # bugreport is triggered by the VOLUME-DOWN and VOLUME-UP keys.
 # bugtogo.sh tool will invoke bugreport and propt email composer
 # if not in user build.
-service bugreport /system/bin/bugtogo.sh
+service bugreport /system/bin/bugmailer.sh -b /system/media/audio/ui/Dock.ogg -e /system/media/audio/ui/Undock.ogg
     class main
     disabled
     oneshot
