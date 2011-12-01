@@ -144,7 +144,10 @@ on boot
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpufreq/interactive/go_maxspeed_load 80
+    # timer 20ms, min sample 80ms, go max at 80%
+    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 20000
+    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 80000
+    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
     # Wakelock debug
     write /sys/module/wakelock/parameters/debug_mask 7
     # No need to continuously scan w1 bus
