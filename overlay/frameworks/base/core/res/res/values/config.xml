@@ -230,4 +230,13 @@
     <!-- Is the notification LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">true</bool>
 
+
+    <!-- Base "touch slop" value used by ViewConfiguration as a
+         movement threshold where scrolling should begin.
+
+         Stingray's touch firmware has its own built-in slop that
+         prevents us from lowering this to the preferred value without
+         causing scroll startup to jump. -->
+    <dimen name="config_viewConfigurationTouchSlop">12dp</dimen>
+
 </resources>
