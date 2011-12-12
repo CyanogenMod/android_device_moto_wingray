@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ZIP=tervigon-ota-221846.zip
-BUILD=iml40b
+# 221846 = IML40B
+# 236517 = IML70C
+ZIP=tervigon-ota-236517.zip
+BUILD=iml70c
 ROOTDEVICE=stingray
 DEVICE=wingray
 MANUFACTURER=moto
