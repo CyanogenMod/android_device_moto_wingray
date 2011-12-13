@@ -159,6 +159,11 @@ on boot
     # ReadMin, ReadInitial, ReadMax, WriteMin, WriteInitial, WriteMax,
     setprop net.tcp.buffersize.lte     524288,1048576,2097152,262144,524288,1048576
 
+# make binder state/stats readable by root only, so that they are not
+# captured by default in bugreports
+    chmod 0400 /sys/kernel/debug/binder/stats
+    chmod 0400 /sys/kernel/debug/binder/state
+
 # Ecompass daemon
 service akmd2 /system/bin/akmd2
     class late_start
