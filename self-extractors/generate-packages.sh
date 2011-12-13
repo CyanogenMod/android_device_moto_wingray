@@ -16,8 +16,9 @@
 
 # 221846 = IML40B
 # 236517 = IML70C
-ZIP=tervigon-ota-236517.zip
-BUILD=iml70c
+# 237179 = IML73
+ZIP=tervigon-ota-237179.zip
+BUILD=iml73
 ROOTDEVICE=stingray
 DEVICE=wingray
 MANUFACTURER=moto
