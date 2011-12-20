@@ -136,7 +136,7 @@ void AudioHardware::readHwGainFile()
         ::read(fd, &version, sizeof(uint32_t));
         ::read(fd, &barker, sizeof(uint32_t));
         rc = ::read(fd, mCpcapGain, sizeof(mCpcapGain));
-        LOGD("Read gain file, format %X version %X", format, version);
+        ALOGD("Read gain file, format %X version %X", format, version);
         ::close(fd);
     }
     if (rc != sizeof(mCpcapGain) || format != 0x30303032) {
@@ -392,10 +392,10 @@ status_t AudioHardware::setParameters(const String8& keyValuePairs)
     if (param.get(key, value) == NO_ERROR) {
         if (value == BT_NREC_VALUE_ON) {
             mBluetoothNrec = true;
-            LOGD("Turn on bluetooth NREC");
+            ALOGD("Turn on bluetooth NREC");
         } else {
             mBluetoothNrec = false;
-            LOGD("Turning noise reduction and echo cancellation off for BT "
+            ALOGD("Turning noise reduction and echo cancellation off for BT "
                  "headset");
         }
         doRouting();
@@ -407,13 +407,13 @@ status_t AudioHardware::setParameters(const String8& keyValuePairs)
         for (int i = 0; i < mNumSndEndpoints; i++) {
             if (!strcasecmp(value.string(), mSndEndpoints[i].name)) {
                 mBluetoothId = mSndEndpoints[i].id;
-                LOGD("Using custom acoustic parameters for %s", value.string());
+                ALOGD("Using custom acoustic parameters for %s", value.string());
                 break;
             }
         }
 #endif
         if (mBluetoothId == 0) {
-            LOGD("Using default acoustic parameters "
+            ALOGD("Using default acoustic parameters "
                  "(%s not in acoustic database)", value.string());
             doRouting();
         }
@@ -702,7 +702,7 @@ status_t AudioHardware::doRouting_l()
         } else {
             mHwOutRate = AUDIO_HW_OUT_SAMPLERATE;
         }
-        LOGD("EC/NS active, requests rate as %d for in/out", mHwInRate);
+        ALOGD("EC/NS active, requests rate as %d for in/out", mHwInRate);
     }
     else
 #endif
@@ -716,7 +716,7 @@ status_t AudioHardware::doRouting_l()
     if (btScoOn) {
         mHwOutRate = 8000;
         mHwInRate = 8000;
-        LOGD("Bluetooth SCO active, rate forced to 8K");
+        ALOGD("Bluetooth SCO active, rate forced to 8K");
     }
 
     if (input) {
@@ -1064,7 +1064,7 @@ ssize_t AudioHardware::AudioStreamOutTegra::write(const void* buffer, size_t byt
         LOGE("%s: mHardware is null", __FUNCTION__);
         return NO_INIT;
     }
-    // LOGD("AudioStreamOutTegra::write(%p, %u) TID %d", buffer, bytes, gettid());
+    // ALOGD("AudioStreamOutTegra::write(%p, %u) TID %d", buffer, bytes, gettid());
     // Protect output state during the write process.
 
     if (mSleepReq) {
@@ -1144,7 +1144,7 @@ ssize_t AudioHardware::AudioStreamOutTegra::write(const void* buffer, size_t byt
             if (!mSrc.initted() ||
                  mSrc.inRate() != (int)sampleRate() ||
                  mSrc.outRate() != mDriverRate) {
-                LOGD("%s: downconvert started from %d to %d",__FUNCTION__,
+                ALOGD("%s: downconvert started from %d to %d",__FUNCTION__,
                      sampleRate(), mDriverRate);
                 mSrc.init(sampleRate(), mDriverRate);
                 if (!mSrc.initted()) {
@@ -1638,7 +1638,7 @@ ssize_t AudioHardware::AudioStreamInTegra::read(void* buffer, ssize_t bytes)
             if (!mSrc.initted() ||
                  mSrc.inRate() != mDriverRate ||
                  mSrc.outRate() != (int)mSampleRate) {
-                LOGD ("%s: Upconvert started from %d to %d", __FUNCTION__,
+                ALOGD ("%s: Upconvert started from %d to %d", __FUNCTION__,
                        mDriverRate, mSampleRate);
                 mSrc.init(mDriverRate, mSampleRate);
                 if (!mSrc.initted()) {
