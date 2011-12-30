@@ -44,6 +44,8 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_SMP := true
 TARGET_ARCH_VARIANT := armv7-a
+TARGET_ARCH_VARIANT_CPU := cortex-a9
+TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 ARCH_ARM_HAVE_TLS_REGISTER := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -87,3 +89,6 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 # Avoid the generation of ldrcc instructions
 NEED_WORKAROUND_CORTEX_A9_745320 := true
 BOARD_KERNEL_CMDLINE := androidboot.carrier=wifi-only product_type=w
+
+TARGET_NO_RADIOIMAGE := true
+TARGET_NO_BOOTLOADER := true
