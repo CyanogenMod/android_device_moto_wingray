@@ -87,7 +87,8 @@ PRODUCT_PACKAGES := \
     hcitool \
     bttest \
     com.android.future.usb.accessory \
-    whisperd
+    whisperd \
+    Torch
 
 PRODUCT_CHARACTERISTICS := tablet
 
@@ -113,10 +114,10 @@ PRODUCT_COPY_FILES += \
     system/extras/bugmailer/send_bug:system/bin/send_bug
 
 # inherit from the non-open-source side, if present
-ifneq ($(filter trygon trygon_l10n calgon full_stingray tyranid stingray,$(TARGET_PRODUCT)),)
-$(call inherit-product-if-exists, vendor/moto/stingray/stingray-vendor.mk)
+ifneq ($(filter trygon trygon_l10n calgon full_stingray tyranid stingray cm_stingray,$(TARGET_PRODUCT)),)
+$(call inherit-product-if-exists, vendor/motorola/stingray/stingray-vendor.mk)
 else
-$(call inherit-product-if-exists, vendor/moto/stingray/wingray-vendor.mk)
+$(call inherit-product-if-exists, vendor/motorola/stingray/wingray-vendor.mk)
 endif
 
 WIFI_BAND := 802_11_ABG

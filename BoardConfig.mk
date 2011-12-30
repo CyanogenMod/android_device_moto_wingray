@@ -36,7 +36,7 @@ SMALLER_FONT_FOOTPRINT := true
 
 # inherit from the proprietary version
 # needed for BP-flashing updater extensions
--include vendor/moto/stingray/BoardConfigVendor.mk
+-include vendor/motorola/stingray/BoardConfigVendor.mk
 
 TARGET_BOARD_PLATFORM := tegra
 
@@ -44,6 +44,8 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_SMP := true
 TARGET_ARCH_VARIANT := armv7-a
+TARGET_ARCH_VARIANT_CPU := cortex-a9
+TARGET_ARCH_VARIANT_FPU := vfpv3-d16
 ARCH_ARM_HAVE_TLS_REGISTER := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -91,3 +93,10 @@ BOARD_KERNEL_CMDLINE := androidboot.carrier=wifi-only product_type=w
 # Use the open-source board-info file if none was set by the vendor
 # config.
 TARGET_BOARD_INFO_FILE ?= device/moto/wingray/board-info.txt
+
+TARGET_NO_RADIOIMAGE := true
+TARGET_NO_BOOTLOADER := true
+
+BOARD_HAS_NO_SELECT_BUTTON := true
+
+TARGET_OTA_ASSERT_DEVICE := wingray,stingray
