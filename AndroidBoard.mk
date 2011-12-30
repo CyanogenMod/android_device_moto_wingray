@@ -1,6 +1,10 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
+TARGET_KERNEL_CONFIG := cyanogenmod_stingray_defconfig
+
+TARGET_KERNEL_SOURCE := kernel/motorola/stingray
+
 ifeq ($(TARGET_PREBUILT_KERNEL),)
 TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/kernel
 endif
@@ -24,4 +28,4 @@ subdir_makefiles:= \
 
 include $(subdir_makefiles)
 
--include vendor/moto/stingray/AndroidBoardVendor.mk
+-include vendor/motorola/stingray/AndroidBoardVendor.mk
