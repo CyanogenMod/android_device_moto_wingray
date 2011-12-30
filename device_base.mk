@@ -51,6 +51,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
+    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
     frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
     frameworks/native/data/etc/android.hardware.sensor.barometer.xml:system/etc/permissions/android.hardware.sensor.barometer.xml \
     frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
@@ -87,7 +88,8 @@ PRODUCT_PACKAGES := \
     hcitool \
     bttest \
     com.android.future.usb.accessory \
-    whisperd
+    whisperd \
+    Torch
 
 PRODUCT_CHARACTERISTICS := tablet
 
@@ -113,10 +115,10 @@ PRODUCT_COPY_FILES += \
     system/extras/bugmailer/send_bug:system/bin/send_bug
 
 # inherit from the non-open-source side, if present
-ifneq ($(filter trygon trygon_l10n calgon full_stingray tyranid stingray,$(TARGET_PRODUCT)),)
-$(call inherit-product-if-exists, vendor/moto/stingray/stingray-vendor.mk)
+ifneq ($(filter trygon trygon_l10n calgon full_stingray tyranid stingray cm_stingray,$(TARGET_PRODUCT)),)
+$(call inherit-product-if-exists, vendor/motorola/stingray/stingray-vendor.mk)
 else
-$(call inherit-product-if-exists, vendor/moto/stingray/wingray-vendor.mk)
+$(call inherit-product-if-exists, vendor/motorola/stingray/wingray-vendor.mk)
 endif
 
 WIFI_BAND := 802_11_ABG
