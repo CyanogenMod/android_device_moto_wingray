@@ -35,8 +35,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 #$(call inherit-product, device/sample/products/backup_overlay.mk)
 $(call inherit-product, device/moto/wingray/device.mk)
 
-# Discard inherited values and use our own instead.
-PRODUCT_NAME := full_wingray
-PRODUCT_DEVICE := wingray
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := Full Android on Wingray
+#Discard as these are set in cm.mk
+#PRODUCT_NAME := full_wingray
+#PRODUCT_DEVICE := wingray
+#PRODUCT_BRAND := Android
+#PRODUCT_MODEL := Full Android on Wingray
