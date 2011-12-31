@@ -37,15 +37,7 @@
     <!-- the 6th element indicates boot-time dependency-met value. -->
     <string-array translatable="false" name="networkAttributes">
         <item>"wifi,1,1,2,-1,true"</item>
-        <item>"mobile,0,0,1,-1,false"</item>
-        <item>"mobile_mms,2,0,2,60000,false"</item>
-        <item>"mobile_supl,3,0,2,60000,false"</item>
-        <item>"mobile_dun,4,0,5,60000,false"</item>
-        <item>"mobile_hipri,5,0,3,60000,false"</item>
         <item>"bluetooth,7,7,0,-1,true"</item>
-        <item>"mobile_fota,10,0,2,60000,true"</item>
-        <item>"mobile_ims,11,0,2,-1,true"</item>
-        <item>"mobile_cbs,12,0,2,60000,false"</item>
         <item>"wifi_p2p,13,1,0,-1,true"</item>
     </string-array>
 
