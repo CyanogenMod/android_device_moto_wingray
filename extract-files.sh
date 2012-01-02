@@ -63,7 +63,6 @@ adb pull /system/lib/egl/libEGL_perfhud.so ../../../vendor/$MANUFACTURER/$DEVICE
 adb pull /system/lib/egl/libEGL_tegra.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/libEGL_tegra.so
 adb pull /system/lib/egl/libGLESv1_CM_perfhud.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/libGLESv1_CM_perfhud.so
 adb pull /system/lib/egl/libGLESv1_CM_tegra.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/libGLESv1_CM_tegra.so
-adb pull /system/lib/egl/libGLESv2_perfhud.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/libGLESv2_perfhud.so
 adb pull /system/lib/egl/libGLESv2_tegra.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/libGLESv2_tegra.so
 adb pull /system/lib/hw/camera.stingray.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/camera.stingray.so
 adb pull /system/lib/hw/gps.stingray.so ../../../vendor/$MANUFACTURER/$DEVICE/proprietary/gps.stingray.so
@@ -159,7 +158,6 @@ PRODUCT_COPY_FILES += \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/suplcerts.bks:system/etc/security/suplcerts.bks \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/voip_aud_params.bin:system/etc/voip_aud_params.bin \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/bcm4329.cal:system/etc/wifi/bcm4329.cal \\
-    vendor/__MANUFACTURER__/__DEVICE__/proprietary/libEGL_perfhud.so:system/lib/egl/libEGL_perfhud.so \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/libEGL_tegra.so:system/lib/egl/libEGL_tegra.so \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/libGLESv1_CM_perfhud.so:system/lib/egl/libGLESv1_CM_perfhud.so \\
     vendor/__MANUFACTURER__/__DEVICE__/proprietary/libGLESv1_CM_tegra.so:system/lib/egl/libGLESv1_CM_tegra.so \\
