@@ -1,6 +1,6 @@
 on boot
     write /sys/class/android_usb/android0/iManufacturer $ro.product.manufacturer
-    write /sys/class/android_usb/android0/iProduct $ro.product.model
+    write /sys/class/android_usb/android0/iProduct $ro.boot.modelno
     write /sys/class/android_usb/android0/iSerial $ro.serialno
     write /sys/class/android_usb/android0/f_rndis/manufacturer Motorola
     write /sys/class/android_usb/android0/f_rndis/vendorID 22b8
@@ -30,6 +30,7 @@ on property:sys.usb.config=rndis
     write /sys/class/android_usb/android0/functions $sys.usb.config
     write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state $sys.usb.config
 
 on property:sys.usb.config=rndis,adb
@@ -40,6 +41,7 @@ on property:sys.usb.config=rndis,adb
     write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
     start adbd
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state $sys.usb.config
 
 on property:sys.usb.config=ptp
@@ -105,8 +107,8 @@ on property:sys.usb.config=rndis,acm,usbnet
     write /sys/class/android_usb/android0/idProduct 70b2
     write /sys/class/android_usb/android0/functions $sys.usb.config
     write /sys/class/android_usb/f_acm/instances 3
-    write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state $sys.usb.config
 
 on property:sys.usb.config=rndis,acm,usbnet,adb
@@ -115,8 +117,8 @@ on property:sys.usb.config=rndis,acm,usbnet,adb
     write /sys/class/android_usb/android0/idProduct 70b3
     write /sys/class/android_usb/android0/functions $sys.usb.config
     write /sys/class/android_usb/f_acm/instances 3
-    write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
     start adbd
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state $sys.usb.config
 

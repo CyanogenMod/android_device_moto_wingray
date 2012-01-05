@@ -44,6 +44,7 @@
     <string-array translatable="false" name="networkAttributes">
         <item>"wifi,1,1,2,-1,true"</item>
         <item>"bluetooth,7,7,0,-1,true"</item>
+        <item>"ethernet,9,9,9,-1,true"</item>
         <item>"wifi_p2p,13,1,0,-1,true"</item>
     </string-array>
 
@@ -209,4 +210,20 @@
          causing scroll startup to jump. -->
     <dimen name="config_viewConfigurationTouchSlop">12dp</dimen>
 
+    <!-- Array of OEM specific USB mode override config.
+         OEM can override a certain USB mode depending on ro.bootmode.
+         Specify an array of below items to set override rule.
+         [bootmode]:[original USB mode]:[USB mode used]-->
+    <string-array translatable="false" name="config_oemUsbModeOverride">
+        <item>"bp-tools:mtp:acm,usbnet"</item>
+        <item>"bp-tools:mtp,adb:acm,usbnet,adb"</item>
+        <item>"bp-tools:ptp:acm,usbnet"</item>
+        <item>"bp-tools:ptp,adb:acm,usbnet,adb"</item>
+        <item>"bp-tools:rndis:rndis,acm,usbnet"</item>
+        <item>"bp-tools:rndis,adb:rndis,acm,usbnet,adb"</item>
+        <item>"factorycable:mtp:usbnet"</item>
+        <item>"factorycable:mtp,adb:usbnet,adb"</item>
+        <item>"factorycable:ptp:usbnet"</item>
+        <item>"factorycable:ptp,adb:usbnet,adb"</item>
+    </string-array>
 </resources>
