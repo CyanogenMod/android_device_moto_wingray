@@ -228,7 +228,7 @@ void AudioPostProcessor::initEcns(int rate, int bytes)
     Mutex::Autolock lock(mEcnsBufLock);
 
     if (rate != 8000 && rate != 16000) {
-        LOGW("Invalid rate for EC/NS, disabling");
+        ALOGW("Invalid rate for EC/NS, disabling");
         mEcnsEnabled = 0;
         mEcnsRunning = 0;
         return;

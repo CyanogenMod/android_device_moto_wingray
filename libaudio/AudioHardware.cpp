@@ -179,7 +179,7 @@ AudioStreamOut* AudioHardware::openOutputStream(
         for (unsigned tries = 0; tries < MAX_INIT_TRIES; ++tries) {
             if (NO_ERROR == out->init())
                 break;
-            LOGW("AudioStreamOutTegra::init failed soft, retrying");
+            ALOGW("AudioStreamOutTegra::init failed soft, retrying");
             sleep(1);
         }
         status_t lStatus;
@@ -207,7 +207,7 @@ AudioStreamOut* AudioHardware::openOutputStream(
 void AudioHardware::closeOutputStream(AudioStreamOut* out) {
     Mutex::Autolock lock(mLock);
     if (mOutput == 0 || mOutput != out) {
-        LOGW("Attempt to close invalid output stream");
+        ALOGW("Attempt to close invalid output stream");
     }
     else {
         // AudioStreamOutTegra destructor calls standby which locks
@@ -253,7 +253,7 @@ void AudioHardware::closeInputStream(AudioStreamIn* in)
 
     ssize_t index = mInputs.indexOf((AudioStreamInTegra *)in);
     if (index < 0) {
-        LOGW("Attempt to close invalid input stream");
+        ALOGW("Attempt to close invalid input stream");
     } else {
         mInputs.removeAt(index);
         mLock.unlock();
@@ -446,11 +446,11 @@ size_t AudioHardware::getInputBufferSize(uint32_t sampleRate, int format, int ch
     size_t bufsize;
 
     if (format != AudioSystem::PCM_16_BIT) {
-        LOGW("getInputBufferSize bad format: %d", format);
+        ALOGW("getInputBufferSize bad format: %d", format);
         return 0;
     }
     if (channelCount < 1 || channelCount > 2) {
-        LOGW("getInputBufferSize bad channel count: %d", channelCount);
+        ALOGW("getInputBufferSize bad channel count: %d", channelCount);
         return 0;
     }
 
@@ -665,7 +665,7 @@ status_t AudioHardware::doRouting_l()
 
     if (sndOutDevice != (int)mCurOutDevice.id) {
         if (sndOutDevice == -1) {
-            LOGW("output device set %x not supported, defaulting to speaker",
+            ALOGW("output device set %x not supported, defaulting to speaker",
                  outputDevices);
             mCurOutDevice.id = CPCAP_AUDIO_OUT_SPEAKER;
         }
@@ -1035,7 +1035,7 @@ status_t AudioHardware::AudioStreamOutTegra::set(
                 mBtFdCtl >= 0 &&
                 mBtFdIoCtl >= 0) {
         if (mSpdifFd < 0 || mSpdifFdCtl < 0)
-            LOGW("s/pdif driver not present");
+            ALOGW("s/pdif driver not present");
         return NO_ERROR;
     } else {
         LOGE("Problem opening device files - Is your kernel compatible?");
@@ -1127,7 +1127,7 @@ ssize_t AudioHardware::AudioStreamOutTegra::write(const void* buffer, size_t byt
                 writtenToSpdif = ::write(mSpdifFd, buffer, outsize);
                 ALOGV("%s: written %d bytes to SPDIF", __FUNCTION__, (int)writtenToSpdif);
             } else {
-                LOGW("s/pdif enabled but unavailable");
+                ALOGW("s/pdif enabled but unavailable");
             }
         }
         if (mIsBtEnabled) {
@@ -1948,7 +1948,7 @@ unsigned int  AudioHardware::AudioStreamInTegra::getInputFramesLost() const
         uint64_t actualFrames = (uint64_t)mTotalBuffersRead * framesPerBuffer;
         if (expectedFrames > actualFrames) {
             lostFrames = (unsigned int)(expectedFrames - actualFrames);
-            LOGW("getInputFramesLost() expected %d actual %d lost %d",
+            ALOGW("getInputFramesLost() expected %d actual %d lost %d",
                  (unsigned int)expectedFrames, (unsigned int)actualFrames, lostFrames);
         }
     }
@@ -2012,7 +2012,7 @@ extern "C" AudioHardwareInterface* createAudioHardware(void) {
     for (unsigned tries = 0; tries < MAX_INIT_TRIES; ++tries) {
         if (NO_ERROR == hw->init())
             break;
-        LOGW("AudioHardware::init failed soft, retrying");
+        ALOGW("AudioHardware::init failed soft, retrying");
         sleep(1);
     }
     if (NO_ERROR != hw->initCheck()) {
