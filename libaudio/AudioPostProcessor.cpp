@@ -252,7 +252,7 @@ void AudioPostProcessor::initEcns(int rate, int bytes)
     FILE * fp = fopen("/system/etc/voip_aud_params.bin", "r");
     if (fp) {
         if (fread(mParamTable, sizeof(mParamTable), 1, fp) < 1) {
-            LOGE("Cannot read VOIP parameter file.  Disabling EC/NS.");
+            ALOGE("Cannot read VOIP parameter file.  Disabling EC/NS.");
             fclose(fp);
             mEcnsEnabled = 0;
             mEcnsRunning = 0;
@@ -261,7 +261,7 @@ void AudioPostProcessor::initEcns(int rate, int bytes)
         fclose(fp);
     }
     else {
-        LOGE("Cannot open VOIP parameter file.  Disabling EC/NS.");
+        ALOGE("Cannot open VOIP parameter file.  Disabling EC/NS.");
         mEcnsEnabled = 0;
         mEcnsRunning = 0;
         return;
@@ -344,7 +344,7 @@ int AudioPostProcessor::writeDownlinkEcns(int fd, void * buffer, bool stereo,
         mEcnsOutFdLockp = fdLock;
         mEcnsOutStereo = stereo;
         if (mEcnsBufCond.waitRelative(mEcnsBufLock, seconds(1)) != NO_ERROR) {
-            LOGE("%s: Capture thread is stalled.", __FUNCTION__);
+            ALOGE("%s: Capture thread is stalled.", __FUNCTION__);
         }
         if (mEcnsOutBufSize != 0)
             ALOGD("%s: Buffer not consumed", __FUNCTION__);
@@ -364,7 +364,7 @@ int AudioPostProcessor::read(int fd, void * buffer, int bytes, int rate)
     ssize_t ret;
     ret = ::read(fd, buffer, bytes);
     if (ret < 0)
-        LOGE("Error reading from audio in: %s", strerror(errno));
+        ALOGE("Error reading from audio in: %s", strerror(errno));
     return (int)ret;
 }
 
@@ -396,7 +396,7 @@ int AudioPostProcessor::applyUplinkEcns(void * buffer, int bytes, int rate)
     }
 
     if (!mEcnsRunning) {
-        LOGE("EC/NS failed to init, read returns.");
+        ALOGE("EC/NS failed to init, read returns.");
         if (mEcnsEnabled & AEC) {
             mEcnsBufCond.signal();
         }
@@ -453,12 +453,12 @@ int AudioPostProcessor::applyUplinkEcns(void * buffer, int bytes, int rate)
                 // We've depleted the output buffer, it's smaller than one uplink "frame".
                 // First take any unused data into scratch, then free the write thread.
                 if (mEcnsScratchBuf) {
-                    LOGE("Memleak - coding error");
+                    ALOGE("Memleak - coding error");
                     free(mEcnsScratchBuf);
                 }
                 if (mEcnsOutBufSize - mEcnsOutBufReadOffset > 0) {
                     if ((mEcnsScratchBuf=malloc(mEcnsOutBufSize - mEcnsOutBufReadOffset)) == 0) {
-                        LOGE("%s: Alloc failed, scratch data lost.",__FUNCTION__);
+                        ALOGE("%s: Alloc failed, scratch data lost.",__FUNCTION__);
                     } else {
                         mEcnsScratchBufSize = mEcnsOutBufSize - mEcnsOutBufReadOffset;
                         //ALOGD("....store %d bytes into scratch buf %p",
@@ -538,8 +538,8 @@ void AudioPostProcessor::ecnsLogToRam (int bytes)
         if (!mLogBuf[0]) {
             mLogNumPoints = 0;
             mLogOffset = 0;
-            LOGE("EC/NS AUDIO LOGGER CONFIGURATION:");
-            LOGE("log enable %04X",
+            ALOGE("EC/NS AUDIO LOGGER CONFIGURATION:");
+            ALOGE("log enable %04X",
                 audioProfile[ECNS_LOG_ENABLE_OFFSET]);
             mkdir(ECNSLOGPATH, 00770);
             for (uint16_t i=1; i>0; i<<=1) {
@@ -547,14 +547,14 @@ void AudioPostProcessor::ecnsLogToRam (int bytes)
                    mLogNumPoints++;
                 }
             }
-            LOGE("Number of log points is %d.", mLogNumPoints);
+            ALOGE("Number of log points is %d.", mLogNumPoints);
             logp = mMotDatalog;
             mLogSize = 10*60*50*bytes;
             for (int i=0; i<mLogNumPoints; i++) {
                 // Allocate 10 minutes of logging per point
                 mLogBuf[i]=(char *)malloc(mLogSize);
                 if (!mLogBuf[i]) {
-                    LOGE("%s: Memory allocation failed.", __FUNCTION__);
+                    ALOGE("%s: Memory allocation failed.", __FUNCTION__);
                     for (int j=0; j<i; j++) {
                         free(mLogBuf[j]);
                         mLogBuf[j]=0;
@@ -572,7 +572,7 @@ void AudioPostProcessor::ecnsLogToRam (int bytes)
                 memcpy(&mLogBuf[i][mLogOffset], &logp[4], logp[2]*sizeof(uint16_t));
                 logp += 4+logp[2];
             } else {
-                LOGE("EC/NS logging enabled, but memory not allocated");
+                ALOGE("EC/NS logging enabled, but memory not allocated");
             }
         }
         mLogOffset += bytes;
@@ -588,11 +588,11 @@ void AudioPostProcessor::ecnsLogToFile()
             sprintf(fname, ECNSLOGPATH"/log-0x%04X.pcm", mLogPoint[i]);
             fp = fopen((const char *)fname, "w");
             if (fp) {
-                LOGE("Writing %d bytes to %s", mLogOffset, fname);
+                ALOGE("Writing %d bytes to %s", mLogOffset, fname);
                 fwrite(mLogBuf[i], mLogOffset, 1, fp);
                 fclose(fp);
             } else {
-                LOGE("Problem writing to %s", fname);
+                ALOGE("Problem writing to %s", fname);
             }
         }
     }
@@ -617,12 +617,12 @@ int AudioPostProcessor::read_dock_prop(char const *path)
     if (fd >= 0) {
         int amt = ::read(fd, buffer, SIZE-1);
         if (amt != SIZE-1) {
-	    LOGE("Incomplete dock property read, cannot validate dock");
+	    ALOGE("Incomplete dock property read, cannot validate dock");
 	    return -1;
         }
         spkr_dock_prop = strtoul(buffer, NULL, 16);
 	if (spkr_dock_prop <= 0) {
-	    LOGE("dock property conversion error");
+	    ALOGE("dock property conversion error");
 	    return -EINVAL;
         }
         close(fd);
@@ -632,7 +632,7 @@ int AudioPostProcessor::read_dock_prop(char const *path)
         return spkr_dock_prop;
     } else {
         if (already_warned == -1) {
-            LOGE("read_dock_prop failed to open %s\n", path);
+            ALOGE("read_dock_prop failed to open %s\n", path);
             already_warned = 1;
         }
         return -errno;
@@ -667,7 +667,7 @@ int AudioPostProcessor::EcnsThread::readData(int fd, void * buffer, int bytes, i
         mIsRunning = true;
     }
     if (mEcnsReadCond.waitRelative(mEcnsReadLock, seconds(1)) != NO_ERROR) {
-        LOGE("%s: ECNS thread is stalled.", __FUNCTION__);
+        ALOGE("%s: ECNS thread is stalled.", __FUNCTION__);
         mClientBuf = 0;
         return -1;
     }
@@ -706,7 +706,7 @@ bool AudioPostProcessor::EcnsThread::threadLoop()
         if(exitPending())
             goto error;
         if (ret1 <= 0 || ret2 <= 0) {
-            LOGE("%s: Problem reading.", __FUNCTION__);
+            ALOGE("%s: Problem reading.", __FUNCTION__);
             goto error;
         }
         GETTIMEOFDAY(&mtv3, NULL);
