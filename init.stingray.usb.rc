@@ -105,7 +105,6 @@ on property:sys.usb.config=rndis,acm,usbnet
     write /sys/class/android_usb/android0/idProduct 70b2
     write /sys/class/android_usb/android0/functions $sys.usb.config
     write /sys/class/android_usb/f_acm/instances 3
-    write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state $sys.usb.config
 
@@ -115,7 +114,6 @@ on property:sys.usb.config=rndis,acm,usbnet,adb
     write /sys/class/android_usb/android0/idProduct 70b3
     write /sys/class/android_usb/android0/functions $sys.usb.config
     write /sys/class/android_usb/f_acm/instances 3
-    write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
     start adbd
     setprop sys.usb.state $sys.usb.config
