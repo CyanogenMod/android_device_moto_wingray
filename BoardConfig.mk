@@ -87,3 +87,7 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 # Avoid the generation of ldrcc instructions
 NEED_WORKAROUND_CORTEX_A9_745320 := true
 BOARD_KERNEL_CMDLINE := androidboot.carrier=wifi-only product_type=w
+
+# Use the open-source board-info file if none was set by the vendor
+# config.
+TARGET_BOARD_INFO_FILE ?= device/moto/wingray/board-info.txt
