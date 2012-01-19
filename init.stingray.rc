@@ -321,14 +321,6 @@ on property:ro.bootmode=bp-tools
     start gadget-qbp-modem
     start wrigley-diag
     start logcatd-blan
-    # MTU for USB tethering
-    # TODO: Need a dynamic way to configure appropriate MTU
-    write /sys/class/net/usb0/mtu 1428
-
-on property:ro.bootmode=unknown
-    # MTU for USB tethering
-    # TODO: Need a dynamic way to configure appropriate MTU
-    write /sys/class/net/usb0/mtu 1428
 
 service wlan_prod /system/bin/insmod /system/lib/modules/bcm4329.ko "firmware_path=/vendor/firmware/fw_bcm4329.bin nvram_path=/system/etc/wifi/bcm4329.cal"
     group wifi mot_tcmd system
