@@ -30,6 +30,7 @@ on property:sys.usb.config=rndis
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=rndis,adb
@@ -40,6 +41,7 @@ on property:sys.usb.config=rndis,adb
     write /sys/class/android_usb/android0/bDeviceClass 224
     write /sys/class/android_usb/android0/enable 1
     start adbd
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=ptp
@@ -106,6 +108,7 @@ on property:sys.usb.config=rndis,acm,usbnet
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/f_acm/instances 3
     write /sys/class/android_usb/android0/enable 1
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state ${sys.usb.config}
 
 on property:sys.usb.config=rndis,acm,usbnet,adb
@@ -116,5 +119,6 @@ on property:sys.usb.config=rndis,acm,usbnet,adb
     write /sys/class/android_usb/f_acm/instances 3
     write /sys/class/android_usb/android0/enable 1
     start adbd
+    write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state ${sys.usb.config}
 
