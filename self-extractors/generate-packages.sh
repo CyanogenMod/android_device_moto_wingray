@@ -22,8 +22,9 @@
 # 238649 = IML74G
 # 239410 = IML74K
 # 257829 = IMM30B
-ZIP=tervigon-ota-257829.zip
-BUILD=imm30b
+# 262866 = IMM30D
+ZIP=tervigon-ota-262866.zip
+BUILD=imm30d
 ROOTDEVICE=stingray
 DEVICE=wingray
 MANUFACTURER=moto
