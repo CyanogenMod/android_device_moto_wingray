@@ -225,4 +225,20 @@
          causing scroll startup to jump. -->
     <dimen name="config_viewConfigurationTouchSlop">12dp</dimen>
 
+    <!-- Array of OEM specific USB mode override config.
+         OEM can override a certain USB mode depending on ro.bootmode.
+         Specify an array of below items to set override rule.
+         [bootmode]:[original USB mode]:[USB mode used]-->
+    <string-array translatable="false" name="config_oemUsbModeOverride">
+        <item>"bp-tools:mtp:acm,usbnet"</item>
+        <item>"bp-tools:mtp,adb:acm,usbnet,adb"</item>
+        <item>"bp-tools:ptp:acm,usbnet"</item>
+        <item>"bp-tools:ptp,adb:acm,usbnet,adb"</item>
+        <item>"bp-tools:rndis:rndis,acm,usbnet"</item>
+        <item>"bp-tools:rndis,adb:rndis,acm,usbnet,adb"</item>
+        <item>"factorycable:mtp:usbnet"</item>
+        <item>"factorycable:mtp,adb:usbnet,adb"</item>
+        <item>"factorycable:ptp:usbnet"</item>
+        <item>"factorycable:ptp,adb:usbnet,adb"</item>
+    </string-array>
 </resources>
