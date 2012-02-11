@@ -17,7 +17,6 @@
 /system/app/MotoLocationProxy.apk
 /system/app/StingrayProgramMenu.apk
 /system/app/StingrayProgramMenuSystem.apk
-/system/app/UsbHelper.apk
 /system/bin/akmd2
 /system/bin/batch
 /system/bin/brcm_guci_drv
