@@ -92,7 +92,7 @@ PRODUCT_COPY_FILES += \
 
 # media codec config xml file
 PRODUCT_COPY_FILES += \
-    device/moto/wingray/media_codec.xml:system/etc/media_codec.xml
+    device/moto/wingray/media_codecs.xml:system/etc/media_codecs.xml
 
 # Bluetooth config file
 PRODUCT_COPY_FILES += \
