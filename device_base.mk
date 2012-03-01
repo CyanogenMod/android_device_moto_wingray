@@ -90,6 +90,10 @@ PRODUCT_TAGS += dalvik.gc.type-precise
 PRODUCT_COPY_FILES += \
     device/moto/wingray/media_profiles.xml:system/etc/media_profiles.xml
 
+# media codec config xml file
+PRODUCT_COPY_FILES += \
+    device/moto/wingray/media_codec.xml:system/etc/media_codec.xml
+
 # Bluetooth config file
 PRODUCT_COPY_FILES += \
     system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf \
