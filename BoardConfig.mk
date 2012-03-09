@@ -93,4 +93,6 @@ BOARD_KERNEL_CMDLINE := androidboot.carrier=wifi-only product_type=w
 TARGET_NO_RADIOIMAGE := true
 TARGET_NO_BOOTLOADER := true
 
+BOARD_HAS_NO_SELECT_BUTTON := true
+
 TARGET_OTA_ASSERT_DEVICE := wingray,stingray
