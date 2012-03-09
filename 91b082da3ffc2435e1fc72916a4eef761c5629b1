@@ -1,0 +1,8 @@
+Change-Id: I91b082da3ffc2435e1fc72916a4eef761c5629b1
+Code-Review+2: Steve Kondik <shade@chemlab.org>
+Verified+1: Steve Kondik <shade@chemlab.org>
+Submitted-by: Steve Kondik <shade@chemlab.org>
+Submitted-at: Fri, 09 Mar 2012 09:32:21 +0300
+Reviewed-on: http://review.cyanogenmod.com/13277
+Project: CyanogenMod/android_device_moto_wingray
+Branch: refs/heads/ics
