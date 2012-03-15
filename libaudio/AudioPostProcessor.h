@@ -117,6 +117,8 @@ public:
                         ~EcnsThread();
             int         readData(int fd, void * buffer, int bytes, int rate,
                                  AudioPostProcessor * pp);
+            void        broadcastReadCond() { mEcnsReadCond.broadcast(); }
+
 private:
             bool        threadLoop();
             Mutex       mEcnsReadLock;
