@@ -722,7 +722,7 @@ bool AudioPostProcessor::EcnsThread::threadLoop()
                 goto error;
             }
             if (mEcnsReadCond.waitRelative(mEcnsReadLock, seconds(1)) != NO_ERROR) {
-                LOGE("%s: client stalled.", __FUNCTION__);
+                ALOGE("%s: client stalled.", __FUNCTION__);
             }
         }
         if (mClientBuf && mReadSize) {
