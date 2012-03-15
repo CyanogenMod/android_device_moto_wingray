@@ -43,7 +43,7 @@ LOCAL_SRC_FILES += \
     AudioHardware.cpp
 
 LOCAL_C_INCLUDES += \
-    system/media/audio_effects/include
+    $(call include-path-for, audio-effects)
 
 LOCAL_CFLAGS += -fno-short-enums
 
