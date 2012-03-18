@@ -24,7 +24,6 @@
 #include <utils/SortedVector.h>
 
 #include <hardware_legacy/AudioHardwareBase.h>
-#include <media/mediarecorder.h>
 #include "AudioPostProcessor.h"
 #ifdef USE_PROPRIETARY_AUDIO_EXTENSIONS
 extern "C" {

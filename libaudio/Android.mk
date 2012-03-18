@@ -9,8 +9,7 @@ LOCAL_SRC_FILES := \
 
 LOCAL_SHARED_LIBRARIES := \
     libcutils \
-    libutils \
-    libmedia
+    libutils
 
 LOCAL_STATIC_LIBRARIES := \
     libmedia_helper
@@ -34,7 +33,6 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_SHARED_LIBRARIES := \
     libcutils \
     libutils \
-    libmedia \
     libhardware_legacy
 
 LOCAL_SHARED_LIBRARIES += libdl

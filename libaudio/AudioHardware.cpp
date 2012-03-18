@@ -30,7 +30,6 @@
 #include <fcntl.h>
 
 #include "AudioHardware.h"
-#include <media/AudioRecord.h>
 #include <audio_effects/effect_aec.h>
 #include <audio_effects/effect_ns.h>
 
