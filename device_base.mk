@@ -69,6 +69,9 @@ PRODUCT_COPY_FILES += \
         device/moto/wingray/stingray-keypad.kl:system/usr/keylayout/stingray-keypad.kl \
         device/moto/wingray/stingray-keypad.kcm:system/usr/keychars/stingray-keypad.kcm
 
+PRODUCT_COPY_FILES += \
+        device/moto/wingray/libaudio/audio_policy.conf:system/etc/audio_policy.conf
+
 PRODUCT_PACKAGES := \
     camera.stingray \
     sensors.stingray \
