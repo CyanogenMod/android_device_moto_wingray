@@ -20,6 +20,9 @@ DEVICE_PACKAGE_OVERLAYS := \
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=wlan0
 
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.sf.lcd_density=160
+
 # Set default USB interface
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 	persist.sys.usb.config=mtp
