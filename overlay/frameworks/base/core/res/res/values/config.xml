@@ -22,8 +22,6 @@
 <resources>
     <string name="config_datause_iface">wlan0</string>
 
-    <bool name="config_sf_limitedAlpha">true</bool>
-
     <bool name="config_allowAllRotations">true</bool>
 
     <!-- Software blur is too slow on this device. -->
@@ -63,6 +61,8 @@
         <item>1</item>
         <item>7</item>
     </integer-array>
+
+    <bool translatable="false" name="config_wifi_p2p_support">true</bool>
 
     <!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
     <bool translatable="false" name="config_wifi_dual_band_support">true</bool>
