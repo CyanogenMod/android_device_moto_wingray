@@ -7,16 +7,17 @@ on early-init
     export EXTERNAL_STORAGE /mnt/sdcard
     export SECONDARY_STORAGE /mnt/external1
     mkdir /mnt/sdcard 0000 system system
+    mkdir /mnt/usbdisk 0000 system system
     # for backwards compatibility
     symlink /mnt/sdcard /sdcard
     mkdir /pds 0777 system system
     mkdir /mnt/external1 0000 system system
 
 on fs
-    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/system /system wait ro
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/system /system wait ro noatime
     setprop ro.crypto.tmpfs_options size=128m,mode=0771,uid=1000,gid=1000
-    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/userdata /data wait noatime nosuid nodev nomblk_io_submit
-    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/cache /cache wait noatime nosuid nodev nomblk_io_submit
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/userdata /data wait noatime nosuid nodev nomblk_io_submit,noauto_da_alloc
+    mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/cache /cache wait noatime nosuid nodev nomblk_io_submit,noauto_da_alloc
     mount ext2 /dev/block/platform/sdhci-tegra.3/by-name/pdsb /pds wait ro
     setprop ro.crypto.fuse_sdcard true
 
@@ -140,14 +141,13 @@ on boot
     #write /sys/devices/platform/ohci.0/usb2/2-3/power/level auto
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ondemand
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    # timer 20ms, min sample 80ms, go max at 80%
-    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 20000
-    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 80000
-    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor ondemand
+    write /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate 40000
+    write /sys/devices/system/cpu/cpufreq/ondemand/up_threshold 95
+    write /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy 1
     # Wakelock debug
     write /sys/module/wakelock/parameters/debug_mask 7
     # No need to continuously scan w1 bus
