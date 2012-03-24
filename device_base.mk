@@ -37,6 +37,13 @@ PRODUCT_COPY_FILES += \
     $(TARGET_PREBUILT_WIFI_MODULE):system/lib/modules/bcm4329.ko
 endif
 
+# Other prebuilt modules
+PRODUCT_COPY_FILES += \
+    device/moto/wingray/modules/cifs.ko:system/lib/modules/cifs.ko \
+    device/moto/wingray/modules/option.ko:system/lib/modules/option.ko \
+    device/moto/wingray/modules/scsi_wait_scan.ko:system/lib/modules/scsi_wait_scan.ko \
+    device/moto/wingray/modules/usb_wwan.ko:system/lib/modules/usb_wwan.ko
+
 PRODUCT_COPY_FILES += \
     device/moto/wingray/mXT1386_08_AA.bin:system/etc/firmware/mXT1386_08_AA.bin \
     device/moto/wingray/mXT1386_08_E1.bin:system/etc/firmware/mXT1386_08_E1.bin \
