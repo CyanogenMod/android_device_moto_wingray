@@ -24,8 +24,13 @@
 # 257829 = IMM30B
 # 262866 = IMM30D
 # 299849 = IMM76D
-ZIP=tervigon-ota-299849.zip
-BUILD=imm76d
+# end ics-mr1
+BRANCH=ics-mr1
+if test $BRANCH=ics-mr1
+then
+  ZIP=tervigon-ota-299849.zip
+  BUILD=imm76d
+fi # ics-mr1
 ROOTDEVICE=stingray
 DEVICE=wingray
 MANUFACTURER=moto
