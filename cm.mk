@@ -15,4 +15,4 @@ PRODUCT_MODEL := Xoom
 PRODUCT_MANUFACTURER := Motorola
 
 #Set build fingerprint / ID / Product Name ect.
-PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=tervigon BUILD_FINGERPRINT="motorola/tervigon/wingray:4.0.3/IML77/239789:user/release-keys" PRIVATE_BUILD_DESC="tervigon-user 4.0.3 IML77 239789 release-keys"
+PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=tervigon BUILD_FINGERPRINT="motorola/tervigon/wingray:4.0.4/IML77/239789:user/release-keys" PRIVATE_BUILD_DESC="tervigon-user 4.0.4 IML77 239789 release-keys"
