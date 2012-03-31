@@ -70,8 +70,8 @@ LOCAL_STATIC_LIBRARIES += \
     libCortexA9_anm-r
 
 LOCAL_CFLAGS += -DUSE_PROPRIETARY_AUDIO_EXTENSIONS
-LOCAL_C_INCLUDES += vendor/moto/stingray/motomm/ghdr
-LOCAL_C_INCLUDES += vendor/moto/stingray/motomm/rate_conv
+LOCAL_C_INCLUDES += vendor/motorola/stingray/motomm/ghdr
+LOCAL_C_INCLUDES += vendor/motorola/stingray/motomm/rate_conv
 endif
 
 include $(BUILD_SHARED_LIBRARY)
