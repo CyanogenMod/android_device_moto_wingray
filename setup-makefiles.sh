@@ -16,7 +16,7 @@
 
 DEVICE=wingray
 DEVICEDIR=stingray
-MANUFACTURER=moto
+MANUFACTURER=motorola
 
 mkdir -p ../../../vendor/$MANUFACTURER/$DEVICEDIR
 
