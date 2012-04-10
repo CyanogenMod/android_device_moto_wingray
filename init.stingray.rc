@@ -4,13 +4,15 @@ on early-init
     mount debugfs debugfs /sys/kernel/debug
 
     # EXTERNAL_STORAGE and SECONDARY_STORAGE are needed for sqlite3 _DELETE_FILE trigger
-    export EXTERNAL_STORAGE /mnt/sdcard
-    export SECONDARY_STORAGE /mnt/external1
-    mkdir /mnt/sdcard 0000 system system
+    export EXTERNAL_STORAGE /storage/sdcard0
+    export SECONDARY_STORAGE /storage/sdcard1
+    mkdir /storage 0550 system sdcard_r
+    mkdir /storage/sdcard0 0000 system system
+    mkdir /storage/sdcard1 0000 system system
     # for backwards compatibility
-    symlink /mnt/sdcard /sdcard
+    symlink /storage/sdcard0 /sdcard
+    symlink /storage/sdcard0 /mnt/sdcard
     mkdir /pds 0777 system system
-    mkdir /mnt/external1 0000 system system
 
 on fs
     mount ext4 /dev/block/platform/sdhci-tegra.3/by-name/system /system wait ro
@@ -44,8 +46,8 @@ on post-fs-data
     # cleanup obsolete symlink hack that may be lying around
     rm /data/misc/ril
 
-    # we will remap this as /mnt/sdcard with the sdcard fuse tool
-    mkdir /data/media 0775 media_rw media_rw
+    # we will remap this as /storage/sdcard0 with the sdcard fuse tool
+    mkdir /data/media 0770 media_rw media_rw
     chown media_rw media_rw /data/media
 
     # GPS
@@ -247,7 +249,7 @@ service location /system/bin/location
 service locDrv /system/bin/brcm_guci_drv -config /system/etc/gpsconfig.xml
     class late_start
     user radio
-    group radio inet sdcard_rw
+    group radio inet sdcard_rw sdcard_r
 
 service tcmd /system/bin/tcmd
     class core
@@ -264,7 +266,7 @@ service whisper /system/bin/whisperd
     class late_start
     group radio system mot_accy
 
-# create virtual SD card at /mnt/sdcard, based on the /data/media directory
+# create virtual SD card at /storage/sdcard0, based on the /data/media directory
 # daemon will drop to user/group system/media_rw after initializing
 # underlying files in /data/media will be created with user and group media_rw (1023)
 service sdcard /system/bin/sdcard /data/media 1023 1023
