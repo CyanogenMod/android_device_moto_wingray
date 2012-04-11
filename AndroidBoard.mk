@@ -1,6 +1,10 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
+TARGET_KERNEL_CONFIG := cyanogenmod_stingray_defconfig
+
+TARGET_KERNEL_SOURCE := kernel/stingray
+
 ifeq ($(TARGET_PREBUILT_KERNEL),)
 TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/kernel
 endif
