@@ -25,6 +25,10 @@ PRODUCT_PACKAGES := \
 	LiveWallpapersPicker \
 	VisualizationWallpapers
 
+# Set wifi-only before it's set by generic_no_telephony.mk
+PRODUCT_PROPERTY_OVERRIDES += \
+        ro.carrier=wifi-only
+
 # Inherit from those products. Most specific first.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
 # This is where we'd set a backup provider if we had one
