@@ -6,7 +6,7 @@ on early-init
     # EXTERNAL_STORAGE and SECONDARY_STORAGE are needed for sqlite3 _DELETE_FILE trigger
     export EXTERNAL_STORAGE /storage/sdcard0
     export SECONDARY_STORAGE /storage/sdcard1
-    mkdir /storage 0550 system sdcard_r
+    mkdir /storage 0050 system sdcard_r
     mkdir /storage/sdcard0 0000 system system
     mkdir /storage/sdcard1 0000 system system
     # for backwards compatibility
