@@ -20,7 +20,7 @@
 <!-- The <device> element should contain one or more <storage> elements.
      Exactly one of these should have the attribute primary="true".
      This storage will be the primary external storage and should have path="/mnt/sdcard".
-     Each storage should have both a path and description attribute set.
+     Each storage should have both a path, description and label attribute set.
      The following boolean attributes are optional:
 
         primary:    this storage is the primary external storage
@@ -38,16 +38,19 @@
     <!-- internal emulated storage -->
     <storage android:mountPoint="/mnt/sdcard"
             android:storageDescription="@string/storage_internal"
+            android:storageLabel="@string/storage_label_internal"
             android:primary="true"
             android:emulated="true"
             android:mtpReserve="100" />
     <!-- external SD card -->
     <storage android:mountPoint="/mnt/external1"
             android:storageDescription="@string/storage_sd_card"
+            android:storageLabel="@string/storage_label_sd_card"
             android:removable="true"
             android:maxFileSize="4096" />
     <!-- external USB OTG drive -->
     <storage android:mountPoint="/mnt/usbdisk"
             android:storageDescription="@string/storage_usb"
+            android:storageLabel="@string/storage_label_usb"
             android:removable="true" />
 </StorageList>
