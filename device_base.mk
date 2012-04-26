@@ -78,6 +78,7 @@ PRODUCT_PACKAGES := \
     lights.stingray \
     audio.primary.stingray \
     audio.a2dp.default \
+    audio.usb.default \
     audio_policy.stingray \
     librs_jni \
     make_ext4fs \
