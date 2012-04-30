@@ -28,4 +28,4 @@ subdir_makefiles:= \
 
 include $(subdir_makefiles)
 
--include vendor/moto/stingray/AndroidBoardVendor.mk
+-include vendor/motorola/stingray/AndroidBoardVendor.mk
