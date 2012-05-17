@@ -124,7 +124,7 @@
              frameRate="30" />
 
       <Audio codec="aac"
-             bitRate="96000"
+             bitRate="24000"
              sampleRate="16000"
              channels="1" />
     </EncoderProfile>
@@ -137,7 +137,7 @@
              frameRate="30" />
 
       <Audio codec="aac"
-             bitRate="96000"
+             bitRate="24000"
              sampleRate="16000"
              channels="1" />
     </EncoderProfile>
@@ -188,7 +188,7 @@
             does not capture audio
       -->
       <Audio codec="aac"
-             bitRate="96000"
+             bitRate="24000"
              sampleRate="16000"
              channels="1" />
     </EncoderProfile>
@@ -205,7 +205,7 @@
             does not capture audio
       -->
       <Audio codec="aac"
-             bitRate="96000"
+             bitRate="24000"
              sampleRate="16000"
              channels="1" />
     </EncoderProfile>
@@ -222,7 +222,7 @@
             does not capture audio
       -->
       <Audio codec="aac"
-             bitRate="96000"
+             bitRate="24000"
              sampleRate="16000"
              channels="1" />
     </EncoderProfile>
@@ -270,7 +270,7 @@
              frameRate="30" />
 
       <Audio codec="aac"
-             bitRate="96000"
+             bitRate="24000"
              sampleRate="16000"
              channels="1" />
     </EncoderProfile>
@@ -321,7 +321,7 @@
             does not capture audio
       -->
       <Audio codec="aac"
-             bitRate="96000"
+             bitRate="24000"
              sampleRate="16000"
              channels="1" />
     </EncoderProfile>
