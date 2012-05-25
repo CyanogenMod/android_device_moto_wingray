@@ -239,4 +239,11 @@
         <item>"factorycable:ptp:usbnet"</item>
         <item>"factorycable:ptp,adb:usbnet,adb"</item>
     </string-array>
+
+    <!-- Control the behavior when the user long presses the power button.
+            0 - Nothing
+            1 - Global actions menu
+            2 - Power off (with confirmation)
+    -->
+    <integer name="config_longPressOnPowerBehavior">2</integer>
 </resources>
