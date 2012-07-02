@@ -89,7 +89,8 @@ PRODUCT_PACKAGES := \
     bttest \
     com.android.future.usb.accessory \
     whisperd \
-    Torch
+    Torch \
+    StingrayParts
 
 PRODUCT_CHARACTERISTICS := tablet
 
