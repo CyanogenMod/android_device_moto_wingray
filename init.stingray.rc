@@ -137,6 +137,10 @@ on boot
     chown radio radio /sys/bus/usb/devices/usb1/power/control
     chmod 660 /sys/bus/usb/devices/usb1/power/control
 
+# StingrayParts: Control charging LED
+    chown root system /sys/class/gpio/gpio168/value
+    chmod 0664 /sys/class/gpio/gpio168/value
+
 # Power Management Settings
     #write /sys/devices/platform/ohci.0/usb2/2-3/power/level auto
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
@@ -153,7 +157,7 @@ on boot
     write /sys/module/wakelock/parameters/debug_mask 7
     # No need to continuously scan w1 bus
     write /sys/devices/w1\ bus\ master/w1_master_search 1
-    # Disable charging LED
+    # Disable charging LED by default
     write /sys/class/gpio/gpio168/value 1
 
 # LTE specific TCP buffer setting for stingray

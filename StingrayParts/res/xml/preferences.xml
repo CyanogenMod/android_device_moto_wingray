@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- LEDs -->
+    <PreferenceCategory android:key="category_led"
+        android:title="@string/category_led_title">
+        <CheckBoxPreference android:key="charging_led"
+            android:title="@string/charging_led_title_head"
+            android:summary="@string/charging_led_summary_head" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

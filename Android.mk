@@ -13,3 +13,9 @@
 # limitations under the License.
 
 LOCAL_PATH := $(my-dir)
+subdir_makefiles := \
+	$(LOCAL_PATH)/StingrayParts/Android.mk
+
+ifneq ($(filter stingray wingray everest,$(TARGET_DEVICE)),)
+include $(subdir_makefiles)
+endif
