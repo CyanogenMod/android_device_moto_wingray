@@ -1,0 +1,12 @@
+[
+    {
+        "repository": "android_device_moto_common",
+        "target_path": "device/moto/common"
+        "branch": "jellybean"
+    },
+    {
+        "repository": "motorola-kernel-stingray",
+        "target_path": "kernel/motorola/stingray",
+        "branch": "ics"
+    }
+]
