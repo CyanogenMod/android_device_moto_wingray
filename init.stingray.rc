@@ -13,6 +13,8 @@ on early-init
     # for backwards compatibility
     symlink /storage/sdcard0 /sdcard
     symlink /storage/sdcard0 /mnt/sdcard
+    symlink /storage/sdcard1 /mnt/external1
+    symlink /storage/usbdisk /mnt/usbdisk
     mkdir /pds 0777 system system
 
 on fs
