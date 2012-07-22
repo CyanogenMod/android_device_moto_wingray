@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+ <?xml version="1.0" encoding="utf-8"?>
 <!--
 /*
 ** Copyright 2009, The Android Open Source Project
@@ -245,5 +245,5 @@
             1 - Global actions menu
             2 - Power off (with confirmation)
     -->
-    <integer name="config_longPressOnPowerBehavior">2</integer>
+    <integer name="config_longPressOnPowerBehavior">1</integer>
 </resources>
