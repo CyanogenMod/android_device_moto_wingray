@@ -212,5 +212,5 @@
             1 - Global actions menu
             2 - Power off (with confirmation)
     -->
-    <integer name="config_longPressOnPowerBehavior">2</integer>
+    <integer name="config_longPressOnPowerBehavior">1</integer>
 </resources>
