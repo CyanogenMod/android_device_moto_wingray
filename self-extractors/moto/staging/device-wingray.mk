@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_STEM := wingray/BoardConfigWingray.mk
+LOCAL_PATH := vendor/moto/wingray
 
--include vendor/broadcom/$(LOCAL_STEM)
--include vendor/moto/$(LOCAL_STEM)
--include vendor/nvidia/$(LOCAL_STEM)
+# Motorola blobnecessary for wingray hardware
+PRODUCT_COPY_FILES := \
+    $(LOCAL_PATH)/proprietary/camera.stingray.so:system/lib/hw/camera.stingray.so

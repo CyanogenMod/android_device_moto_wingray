@@ -35,7 +35,7 @@ ROOTDEVICE=stingray
 DEVICE=wingray
 MANUFACTURER=moto
 
-for COMPANY in nvidia broadcom
+for COMPANY in nvidia broadcom moto
 do
   echo Processing files from $COMPANY
   rm -rf tmp
@@ -48,6 +48,11 @@ do
             system/etc/firmware/bcm4329.hcd \
             system/etc/wifi/bcm4329.cal \
             system/vendor/firmware/fw_bcm4329_mfg.bin
+            "
+    ;;
+  moto)
+    TO_EXTRACT="\
+            system/lib/hw/camera.stingray.so
             "
     ;;
   nvidia)
@@ -70,8 +75,11 @@ do
             system/etc/firmware/nvmm_sw_mp3dec.axf \
             system/etc/firmware/nvmm_wavdec.axf \
             system/etc/firmware/nvrm_avp.bin \
+            system/lib/egl/libEGL_perfhud.so \
             system/lib/egl/libEGL_tegra.so \
+            system/lib/egl/libGLESv1_CM_perfhud.so \
             system/lib/egl/libGLESv1_CM_tegra.so \
+            system/lib/egl/libGLESv2_perfhud.so \
             system/lib/egl/libGLESv2_tegra.so \
             system/lib/hw/gralloc.tegra.so \
             system/lib/hw/hwcomposer.tegra.so \
@@ -90,6 +98,8 @@ do
             system/lib/libnvmm_tracklist.so \
             system/lib/libnvmm_utils.so \
             system/lib/libnvmm_video.so \
+            system/lib/libnvodm_imager.so \
+            system/lib/libnvodm_query.so \
             system/lib/libnvomx.so \
             system/lib/libnvomxilclient.so \
             system/lib/libnvos.so \
@@ -110,14 +120,6 @@ do
     if test $ONE_FILE = system/vendor/bin/gpsd -o $ONE_FILE = system/vendor/bin/pvrsrvinit
     then
       chmod a+x $FILEDIR/$(basename $ONE_FILE) || echo \ \ \ \ Error chmoding $ONE_FILE
-    fi
-    if test $(echo $ONE_FILE | grep \\.apk\$ | wc -l) = 1
-    then
-      echo \ \ \ \ Splitting $ONE_FILE
-      mkdir -p $FILEDIR/$(basename $ONE_FILE).parts || echo \ \ \ \ Error making parts dir for $ONE_FILE
-      unzip $FILEDIR/$(basename $ONE_FILE) -d $FILEDIR/$(basename $ONE_FILE).parts > /dev/null || echo \ \ \ \ Error unzipping $ONE_FILE
-      rm $FILEDIR/$(basename $ONE_FILE) || echo \ \ \ \ Error removing original $ONE_FILE
-      rm -rf $FILEDIR/$(basename $ONE_FILE).parts/META-INF || echo \ \ \ \ Error removing META-INF for $ONE_FILE
     fi
   done
   echo \ \ Setting up $COMPANY-specific makefiles
