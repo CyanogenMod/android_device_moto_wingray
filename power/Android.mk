@@ -1,4 +1,4 @@
-# Copyright (C) 2010 The Android Open Source Project
+# Copyright (C) 2012 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH := $(my-dir)
-subdir_makefiles := \
-    $(LOCAL_PATH)/sensors/Android.mk \
-    $(LOCAL_PATH)/liblights/Android.mk \
-    $(LOCAL_PATH)/recovery/Android.mk \
-    $(LOCAL_PATH)/whisper/Android.mk \
-    $(LOCAL_PATH)/power/Android.mk \
-    $(LOCAL_PATH)/StingrayParts/Android.mk
 
-ifneq ($(filter stingray wingray everest,$(TARGET_DEVICE)),)
-include $(subdir_makefiles)
-endif
+LOCAL_PATH := $(call my-dir)
+
+# HAL module implemenation stored in
+# hw/<POWERS_HARDWARE_MODULE_ID>.<ro.hardware>.so
+include $(CLEAR_VARS)
+
+LOCAL_MODULE_PATH := $(TARGET_OUT_SHARED_LIBRARIES)/hw
+LOCAL_SHARED_LIBRARIES := liblog libcutils
+LOCAL_SRC_FILES := power_stingray.c
+LOCAL_MODULE := power.stingray
+LOCAL_MODULE_TAGS := optional
+include $(BUILD_SHARED_LIBRARY)

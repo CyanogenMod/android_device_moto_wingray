@@ -33,7 +33,7 @@ PRODUCT_COPY_FILES += \
     device/moto/wingray/init.stingray.rc:root/init.stingray.rc \
     device/moto/wingray/init.stingray.usb.rc:root/init.stingray.usb.rc \
     device/moto/wingray/fstab.stingray:root/fstab.stingray \
-    device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc \
+    device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc
 
 ifneq ($(TARGET_PREBUILT_WIFI_MODULE),)
 PRODUCT_COPY_FILES += \
@@ -81,6 +81,7 @@ PRODUCT_PACKAGES := \
     audio.a2dp.default \
     audio.usb.default \
     audio_policy.stingray \
+    power.stingray \
     librs_jni \
     make_ext4fs \
     l2ping \
