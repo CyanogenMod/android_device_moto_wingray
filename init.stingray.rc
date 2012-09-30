@@ -142,11 +142,17 @@ on boot
     chmod 0664 /sys/class/gpio/gpio168/value
 
 # Power Management Settings
-    # CPUFreq
-    chown root system /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chmod 0664 /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chown root system /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
-    chmod 0664 /sys/devices/system/cpu/cpufreq/ondemand/sampling_rate
+    #write /sys/devices/platform/ohci.0/usb2/2-3/power/level auto
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 216000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1000000
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 216000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1000000
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    # timer 20ms, min sample 80ms, go max at 80%
+    write /sys/devices/system/cpu/cpufreq/interactive/timer_rate 20000
+    write /sys/devices/system/cpu/cpufreq/interactive/min_sample_time 80000
+    write /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load 80
     # Wakelock debug
     write /sys/module/wakelock/parameters/debug_mask 7
     # No need to continuously scan w1 bus

@@ -109,38 +109,13 @@ static int get_scaling_governor(char governor[], int size) {
 
 static void stingray_power_init(struct power_module *module)
 {
-    /*
-     * cpufreq interactive governor: timer 20ms, min sample 80ms,
-     * hispeed 1000MHz at load 80%.
-     */
-    sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq",
-                "216000");
-    sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq",
-                "1000000");
-    sysfs_write("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
-                "interactive");
-    sysfs_write("/sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq",
-                "216000");
-    sysfs_write("/sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq",
-                "1000000");
-    sysfs_write("/sys/devices/system/cpu/cpu1/cpufreq/scaling_governor",
-                "interactive");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/min_sample_time",
-                "80000");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/timer_rate",
-                "20000");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/hispeed_freq",
-                "1000000");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load",
-                "80");
-    sysfs_write("/sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay",
-                "20000");
+    return;
 }
 
 static int boostpulse_open(struct stingray_power_module *stingray)
 {
     char buf[80];
-	char governor[80];
+    char governor[80];
 
     pthread_mutex_lock(&stingray->lock);
 
@@ -149,21 +124,21 @@ static int boostpulse_open(struct stingray_power_module *stingray)
             ALOGE("Can't read scaling governor.");
             stingray->boostpulse_warned = 1;
         } else {
-			if (strncmp(governor, "interactive", 11) == 0) {
-				stingray->boostpulse_fd = open(BOOSTPULSE_INTERACTIVE, O_WRONLY);
+            if (strncmp(governor, "interactive", 11) == 0) {
+                stingray->boostpulse_fd = open(BOOSTPULSE_INTERACTIVE, O_WRONLY);
 
-				if (stingray->boostpulse_fd < 0) {
-					if (!stingray->boostpulse_warned) {
-						strerror_r(errno, buf, sizeof(buf));
-						ALOGE("Error opening %s: %s\n", BOOSTPULSE_INTERACTIVE, buf);
-						stingray->boostpulse_warned = 1;
-					} else if (stingray->boostpulse_fd > 0)
-						ALOGD("Opened %s boostpulse interface", governor);
-				}
-			} else
-				ALOGD("%s boostpulse not supported", governor);
-		}
-	}
+                if (stingray->boostpulse_fd < 0) {
+                    if (!stingray->boostpulse_warned) {
+                        strerror_r(errno, buf, sizeof(buf));
+                        ALOGE("Error opening %s: %s\n", BOOSTPULSE_INTERACTIVE, buf);
+                        stingray->boostpulse_warned = 1;
+                    } else if (stingray->boostpulse_fd > 0)
+                        ALOGD("Opened %s boostpulse interface", governor);
+                }
+            } else
+                ALOGD("%s boostpulse not supported", governor);
+        }
+    }
 
     pthread_mutex_unlock(&stingray->lock);
     return stingray->boostpulse_fd;
@@ -175,11 +150,11 @@ static void stingray_power_hint(struct power_module *module, power_hint_t hint,
     struct stingray_power_module *stingray = (struct stingray_power_module *) module;
     char buf[80];
     int len;
-	int duration = 1;
+    int duration = 1;
 
     switch (hint) {
     case POWER_HINT_INTERACTION:
-	case POWER_HINT_CPU_BOOST:
+    case POWER_HINT_CPU_BOOST:
         if (boostpulse_open(stingray) >= 0) {
             if (data != NULL)
                 duration = (int) data;
@@ -189,7 +164,7 @@ static void stingray_power_hint(struct power_module *module, power_hint_t hint,
 
             if (len < 0) {
                 strerror_r(errno, buf, sizeof(buf));
-	            ALOGE("Error writing to boostpulse: %s\n", buf);
+                ALOGE("Error writing to boostpulse: %s\n", buf);
 
                 pthread_mutex_lock(&stingray->lock);
                 close(stingray->boostpulse_fd);
@@ -210,8 +185,7 @@ static void stingray_power_hint(struct power_module *module, power_hint_t hint,
 
 static void stingray_power_set_interactive(struct power_module *module, int on)
 {
-    sysfs_write(SAMPLING_RATE_ONDEMAND,
-            on ? SAMPLING_RATE_SCREEN_ON : SAMPLING_RATE_SCREEN_OFF);
+    return;
 }
 
 static struct hw_module_methods_t power_module_methods = {
