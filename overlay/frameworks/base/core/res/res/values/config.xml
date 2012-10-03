@@ -24,9 +24,6 @@
 
     <bool name="config_allowAllRotations">true</bool>
 
-    <!-- Software blur is too slow on this device. -->
-    <bool name="config_sf_slowBlur">true</bool>
-
     <!-- XXXXX NOTE THE FOLLOWING RESOURCES USE THE WRONG NAMING CONVENTION.
          Please don't copy them, copy anything else. -->
 
@@ -181,7 +178,6 @@
     <!-- Is the notification LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">true</bool>
 
-
     <!-- Base "touch slop" value used by ViewConfiguration as a
          movement threshold where scrolling should begin.
 
@@ -209,4 +205,6 @@
 
     <!-- Setting to false will disable CM's IME switcher implementation for tablets -->
     <bool name="config_show_cmIMESwitcher">false</bool>
+
+    <integer name="config_deviceHardwareKeys">0</integer>
 </resources>
