@@ -206,5 +206,6 @@
     <!-- Setting to false will disable CM's IME switcher implementation for tablets -->
     <bool name="config_show_cmIMESwitcher">false</bool>
 
-    <integer name="config_deviceHardwareKeys">0</integer>
+    <!-- Treat the on screen buttons as hardware keys? -->
+    <integer name="config_deviceHardwareKeys">7</integer>
 </resources>
