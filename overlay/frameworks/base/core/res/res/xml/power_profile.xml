@@ -37,6 +37,11 @@
   <item name="dsp.audio">14.1</item>
   <item name="dsp.video">54.0</item>
   <item name="gps.on">29.7</item>
+  <item name="radio.active">71.5</item>
+  <item name="radio.scanning">1.2</item>
+  <array name="radio.on"> <!-- Strength 0 to BINS-1 (4) -->
+      <value>1.2</value>
+  </array>
       <!-- Different CPU speeds as reported in
        /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
   <array name="cpu.speeds">
@@ -48,6 +53,11 @@
       <value>816000</value>  <!-- 816 MHz -->
       <value>912000</value>  <!-- 912 MHz -->
       <value>1000000</value> <!--   1 GHz -->
+      <value>1200000</value> <!-- 1.2 GHz -->
+      <value>1400000</value> <!-- 1.4 GHz -->
+      <value>1504000</value> <!-- 1.504 GHz -->
+      <value>1600000</value> <!-- 1.6 GHz -->
+      <value>1700000</value> <!-- 1.7 GHz -->
   </array>
   <!-- Power consumption when CPU is idle -->
   <item name="cpu.idle">3.8</item>
@@ -62,6 +72,11 @@
       <value>138</value> <!-- 816 MHz -->
       <value>142</value> <!-- 912 MHz -->
       <value>148</value> <!--   1 GHz -->
+      <value>154</value> <!-- 1.2 GHz -->
+      <value>161</value> <!-- 1.4 GHz -->
+      <value>165</value> <!-- 1.504 GHz -->
+      <value>171</value> <!-- 1.6 GHz -->
+      <value>176</value> <!-- 1.7 GHz -->
   </array>
   <!-- This is the battery capacity in mAh -->
   <item name="battery.capacity">3260</item>
