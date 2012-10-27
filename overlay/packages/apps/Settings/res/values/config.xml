@@ -16,6 +16,11 @@
 -->
 
 <resources xmlns:xliff="urnasis:names:tc:xliff:document:1.2">
+
     <!-- Dock Settings -->
     <bool name="has_dock_settings">true</bool>
+
+    <!-- Show Expanded Desktop preference -->
+    <bool name="config_show_expandedDesktop">true</bool>
+
 </resources>
