@@ -54,6 +54,7 @@ TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 251658240
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 31399067648
 BOARD_FLASH_BLOCK_SIZE := 4096
+TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/class/android_usb/android0/f_mass_storage/lun/file"
 
 # Wifi related defines
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
@@ -86,10 +87,10 @@ endif
 
 TARGET_RECOVERY_UI_LIB := librecovery_ui_stingray
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+BOARD_UMS_LUNFILE := "/sys/class/android_usb/android0/f_mass_storage/lun/file"
 
 # Avoid the generation of ldrcc instructions
 NEED_WORKAROUND_CORTEX_A9_745320 := true
-BOARD_KERNEL_CMDLINE := androidboot.carrier=wifi-only product_type=w
 
 # Use the open-source board-info file if none was set by the vendor
 # config.
@@ -97,10 +98,10 @@ TARGET_BOARD_INFO_FILE ?= device/moto/wingray/board-info.txt
 
 TARGET_NO_RADIOIMAGE := true
 TARGET_NO_BOOTLOADER := true
-
 BOARD_HAS_NO_SELECT_BUTTON := true
 
 TARGET_OTA_ASSERT_DEVICE := wingray,stingray,everest
+BOARD_KERNEL_CMDLINE := androidboot.carrier=wifi-only product_type=w
 
 # CM Boot animation
 TARGET_SCREEN_HEIGHT := 800

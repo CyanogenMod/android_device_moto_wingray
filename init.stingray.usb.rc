@@ -1,10 +1,13 @@
-on boot
-    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
-    write /sys/class/android_usb/android0/iProduct ${ro.boot.modelno}
+on init
     write /sys/class/android_usb/android0/iSerial ${ro.serialno}
     write /sys/class/android_usb/android0/f_rndis/manufacturer Motorola
     write /sys/class/android_usb/android0/f_rndis/vendorID 22b8
     write /sys/class/android_usb/android0/f_rndis/wceis 1
+
+on boot
+    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
+    write /sys/class/android_usb/android0/iProduct ${ro.boot.modelno}
+    write /sys/class/android_usb/f_mass_storage/inquiry_string "Motorola  Xoom         0100"
 
 on property:sys.usb.config=mtp
     write /sys/class/android_usb/android0/enable 0
@@ -58,6 +61,25 @@ on property:sys.usb.config=ptp,adb
     write /sys/class/android_usb/android0/idProduct 70b5
     write /sys/class/android_usb/android0/functions ${sys.usb.config}
     write /sys/class/android_usb/android0/enable 1
+    start adbd
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mass_storage
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 22b8
+    write /sys/class/android_usb/android0/idProduct 70a6
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+    write /sys/class/android_usb/android0/f_mass_storage/lun/file /dev/block/vold/179:0
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mass_storage,adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 22b8
+    write /sys/class/android_usb/android0/idProduct 70a7
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+    write /sys/class/android_usb/android0/f_mass_storage/lun/file /dev/block/vold/179:0
     start adbd
     setprop sys.usb.state ${sys.usb.config}
 
@@ -121,4 +143,3 @@ on property:sys.usb.config=rndis,acm,usbnet,adb
     start adbd
     write /sys/class/net/rndis0/mtu 1428
     setprop sys.usb.state ${sys.usb.config}
-
