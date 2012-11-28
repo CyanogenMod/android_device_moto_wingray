@@ -197,9 +197,4 @@
         <item>"factorycable:ptp,adb:usbnet,adb"</item>
     </string-array>
 
-    <!-- Setting to false will disable CM's IME switcher implementation for tablets -->
-    <bool name="config_show_cmIMESwitcher">false</bool>
-
-    <!-- Treat the on screen buttons as hardware keys? -->
-    <integer name="config_deviceHardwareKeys">7</integer>
 </resources>
