@@ -201,4 +201,7 @@
         <item>"factorycable:ptp,adb:usbnet,adb"</item>
     </string-array>
 
+    <!--  Maximum number of supported users -->
+    <integer name="config_multiuserMaximumUsers">5</integer>
+
 </resources>
