@@ -49,3 +49,4 @@
 # ************************************************
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/default.prop)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/permissions/android.hardware.wifi.direct.xml)
+$(call add-clean-step, rm -f $(TARGET_OUT)/build.prop)
