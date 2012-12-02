@@ -5,7 +5,7 @@ on init
     mkdir /storage 0550 system sdcard_r
     mkdir /storage/emulated 0555 root root
     mkdir /storage/sdcard1 0000 system system
-    mkdir /storage/usbdisk 0000 system system
+    mkdir /storage/usbdisk0 0000 system system
 
     export EXTERNAL_STORAGE /storage/emulated/legacy
     export SECONDARY_STORAGE /storage/sdcard1
@@ -18,7 +18,7 @@ on init
     symlink /storage/emulated/legacy /storage/sdcard0
     symlink /mnt/shell/emulated/0 /storage/emulated/legacy
     symlink /storage/sdcard1 /mnt/external1
-    symlink /storage/usbdisk /mnt/usbdisk
+    symlink /storage/usbdisk0 /mnt/usbdisk
     mkdir /pds 0777 system system
 
 on fs

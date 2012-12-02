@@ -48,7 +48,7 @@
             android:maxFileSize="4096"
             android:allowMassStorage="true" />
     <!-- external USB OTG drive -->
-    <storage android:mountPoint="/storage/usbdisk"
+    <storage android:mountPoint="/storage/usbdisk0"
             android:storageDescription="@string/storage_usb"
             android:removable="true" />
 </StorageList>
