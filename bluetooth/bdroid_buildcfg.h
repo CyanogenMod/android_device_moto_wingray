@@ -17,6 +17,17 @@
 #ifndef _BDROID_BUILDCFG_H
 #define _BDROID_BUILDCFG_H
 
-#define BTM_DEF_LOCAL_NAME   "Motorola Xoom"
+#define BTM_DEF_LOCAL_NAME "Xoom"
+
+// Networking, Capturing, Object Transfer
+// MAJOR CLASS: COMPUTER
+// MINOR CLASS: LAPTOP
+#define BTA_DM_COD {0x1A, 0x01, 0x0C}
+
+#define BTIF_HF_SERVICES (BTA_HSP_SERVICE_MASK)
+#define BTIF_HF_SERVICE_NAMES { BTIF_HSAG_SERVICE_NAME }
+#define BT_CLEAN_TURN_ON_DISABLED TRUE
+#define HID_HOST_INCLUDED FALSE
+#define PAN_NAP_DISABLED TRUE
 
 #endif
