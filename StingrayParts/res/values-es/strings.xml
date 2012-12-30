@@ -14,12 +14,9 @@
      limitations under the License.
 -->
 <resources>
-    <string name="app_name">Xoom Settings</string>
-
-    <!-- Page Headers -->
+    <string name="app_name">Ajustes Xoom</string>
     <string name="general_title">GENERAL</string>
-
     <string name="category_led_title">LEDs</string>
-    <string name="charging_led_title_head">Enable charging LED</string>
-    <string name="charging_led_summary_head">Charging status will be indicated by a light</string>
+    <string name="charging_led_title_head">Activar LED de carga</string>
+    <string name="charging_led_summary_head">La carga del dispositivo se indicará con una luz</string>
 </resources>

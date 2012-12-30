@@ -78,6 +78,8 @@ BOARD_HAVE_GPS := true
 
 USE_OPENGL_RENDERER := true
 BOARD_EGL_CFG := device/moto/wingray/egl.cfg
+MAX_EGL_CACHE_KEY_SIZE := 4096
+MAX_EGL_CACHE_SIZE := 2146304
 
 ifneq ($(HAVE_NVIDIA_PROP_SRC),false)
 # needed for source compilation of nvidia libraries
