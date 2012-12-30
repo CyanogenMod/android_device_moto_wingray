@@ -7,6 +7,6 @@
     {
         "repository": "motorola-kernel-stingray",
         "target_path": "kernel/motorola/stingray",
-        "branch": "jellybean"
+        "branch": "cm-10.1"
     }
 ]
