@@ -29,9 +29,7 @@
 
 #define SCALING_GOVERNOR_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 #define BOOSTPULSE_INTERACTIVE "/sys/devices/system/cpu/cpufreq/interactive/boostpulse"
-#define SAMPLING_RATE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/sampling_rate"
-#define SAMPLING_RATE_SCREEN_ON "40000"
-#define SAMPLING_RATE_SCREEN_OFF "400000"
+#define BOOSTPULSE_ONDEMAND "/sys/devices/system/cpu/cpufreq/ondemand/boostpulse"
 
 struct stingray_power_module {
     struct power_module base;
@@ -40,8 +38,7 @@ struct stingray_power_module {
     int boostpulse_warned;
 };
 
-static int sysfs_read(char *path, char *s, int num_bytes)
-{
+static int sysfs_read(char *path, char *s, int num_bytes) {
     char buf[80];
     int count;
     int ret = 0;
@@ -68,8 +65,7 @@ static int sysfs_read(char *path, char *s, int num_bytes)
     return ret;
 }
 
-static void sysfs_write(char *path, char *s)
-{
+static void sysfs_write(char *path, char *s) {
     char buf[80];
     int len;
     int fd = open(path, O_WRONLY);
@@ -107,13 +103,11 @@ static int get_scaling_governor(char governor[], int size) {
     return 0;
 }
 
-static void stingray_power_init(struct power_module *module)
-{
+static void stingray_power_init(struct power_module *module) {
     return;
 }
 
-static int boostpulse_open(struct stingray_power_module *stingray)
-{
+static int boostpulse_open(struct stingray_power_module *stingray) {
     char buf[80];
     char governor[80];
 
@@ -124,19 +118,17 @@ static int boostpulse_open(struct stingray_power_module *stingray)
             ALOGE("Can't read scaling governor.");
             stingray->boostpulse_warned = 1;
         } else {
-            if (strncmp(governor, "interactive", 11) == 0) {
+            if (strncmp(governor, "interactive", 11) == 0)
                 stingray->boostpulse_fd = open(BOOSTPULSE_INTERACTIVE, O_WRONLY);
+            else if (strncmp(governor, "ondemand", 8) == 0)
+                stingray->boostpulse_fd = open(BOOSTPULSE_ONDEMAND, O_WRONLY);
 
-                if (stingray->boostpulse_fd < 0) {
-                    if (!stingray->boostpulse_warned) {
-                        strerror_r(errno, buf, sizeof(buf));
-                        ALOGE("Error opening %s: %s\n", BOOSTPULSE_INTERACTIVE, buf);
-                        stingray->boostpulse_warned = 1;
-                    } else if (stingray->boostpulse_fd > 0)
-                        ALOGD("Opened %s boostpulse interface", governor);
-                }
-            } else
-                ALOGD("%s boostpulse not supported", governor);
+            if (stingray->boostpulse_fd < 0 && !stingray->boostpulse_warned) {
+                strerror_r(errno, buf, sizeof(buf));
+                ALOGE("Error opening %s: %s\n", BOOSTPULSE_INTERACTIVE, buf);
+                stingray->boostpulse_warned = 1;
+            } else if (stingray->boostpulse_fd > 0)
+                ALOGD("Opened %s boostpulse interface", governor);
         }
     }
 
@@ -144,9 +136,7 @@ static int boostpulse_open(struct stingray_power_module *stingray)
     return stingray->boostpulse_fd;
 }
 
-static void stingray_power_hint(struct power_module *module, power_hint_t hint,
-                            void *data)
-{
+static void stingray_power_hint(struct power_module *module, power_hint_t hint, void *data) {
     struct stingray_power_module *stingray = (struct stingray_power_module *) module;
     char buf[80];
     int len;
@@ -183,8 +173,7 @@ static void stingray_power_hint(struct power_module *module, power_hint_t hint,
     }
 }
 
-static void stingray_power_set_interactive(struct power_module *module, int on)
-{
+static void stingray_power_set_interactive(struct power_module *module, int on) {
     return;
 }
 
