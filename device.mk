@@ -17,3 +17,5 @@
 $(call inherit-product, device/moto/wingray/device_base.mk)
 
 # Add commands which are wingray specific after here
+DEVICE_PACKAGE_OVERLAYS := \
+    device/moto/wingray/overlay device/moto/wingray/overlay-common

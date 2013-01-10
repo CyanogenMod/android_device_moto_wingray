@@ -15,13 +15,12 @@
 #
 
 DEVICE_PACKAGE_OVERLAYS := \
-    device/moto/wingray/overlay
+    device/moto/wingray/overlay-common
 
 PRODUCT_PROPERTY_OVERRIDES := \
-    wifi.interface=wlan0
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.sf.lcd_density=160
+    wifi.interface=wlan0 \
+    ro.sf.lcd_density=160 \
+    drm.service.enabled=true
 
 # Set default USB interface
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
