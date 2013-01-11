@@ -1,6 +1,7 @@
 import init.stingray.usb.rc
 
 on init
+    # See storage config details at http://source.android.com/tech/storage/
     mkdir /mnt/shell/emulated 0700 shell shell
     mkdir /storage 0550 system sdcard_r
     mkdir /storage/emulated 0555 root root
@@ -12,7 +13,7 @@ on init
     export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
     export EMULATED_STORAGE_TARGET /storage/emulated
 
-    # for backwards compatibility
+    # Support legacy paths
     symlink /storage/emulated/legacy /sdcard
     symlink /storage/emulated/legacy /mnt/sdcard
     symlink /storage/emulated/legacy /storage/sdcard0
@@ -65,16 +66,17 @@ on post-fs-data
 on boot
 # bluetooth
     # power up/down interface
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
-    chmod 0660                /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
 
     # UART device
-    chown bluetooth bluetooth /dev/ttyHS2
-    chmod 0660                /dev/ttyHS2
+    chmod 0660 /dev/ttyHS2
+    chown bluetooth net_bt_stack /dev/ttyHS2
 
     # bluetooth MAC address programming
-    chown bluetooth bluetooth /sys/module/board_stingray/parameters/bdaddr
+    chown bluetooth net_bt_stack /sys/module/board_stingray/parameters/bdaddr
     setprop ro.bt.bdaddr_path /sys/module/board_stingray/parameters/bdaddr
 
 # Sensor
@@ -193,7 +195,7 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     disabled
     oneshot
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -aABKL
+service dhcpcd_wlan0 /system/bin/dhcpcd -aABDKL
     class main
     disabled
     oneshot
@@ -203,30 +205,34 @@ service dhcpcd_p2p /system/bin/dhcpcd -aABKL
     disabled
     oneshot
 
-service dhcpcd_eth0 /system/bin/dhcpcd -ABKL
+service dhcpcd_eth0 /system/bin/dhcpcd -ABDKL -f/system/etc/dhcpcd/dhcpcd.conf
+    class main
+    disabled
+    oneshot
+
+service iprenew_wlan0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_p2p /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+service iprenew_eth0 /system/bin/dhcpcd -n
     class main
     disabled
     oneshot
 
 # bluetooth
 service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL
+    class main
     disabled
     oneshot
 
-service iprenew_wlan0 /system/bin/dhcpcd -n
-    disabled
-    oneshot
-
-service iprenew_p2p /system/bin/dhcpcd -n
-    disabled
-    oneshot
-
-service iprenew_eth0 /system/bin/dhcpcd -n
-    disabled
-    oneshot
-
-# bluetooth
 service iprenew_bnep0 /system/bin/dhcpcd -n
+    class main
     disabled
     oneshot
 
@@ -325,30 +331,3 @@ on property:ro.bootmode=bp-tools
     start gadget-qbp-modem
     start wrigley-diag
     start logcatd-blan
-
-service wlan_prod /system/bin/insmod /system/lib/modules/bcm4329.ko "firmware_path=/vendor/firmware/fw_bcm4329.bin nvram_path=/system/etc/wifi/bcm4329.cal"
-    group wifi mot_tcmd system
-    oneshot
-    disabled
-
-service wlan_mfg /system/bin/insmod /system/lib/modules/bcm4329.ko "firmware_path=/vendor/firmware/fw_bcm4329_mfg.bin nvram_path=/system/etc/wifi/bcm4329.cal"
-    group wifi mot_tcmd system
-    oneshot
-    disabled
-
-service wlan_unload /system/bin/rmmod bcm4329
-    group wifi mot_tcmd system
-    oneshot
-    disabled
-
-# turn on wifi for tcmd load production firmware
-on property:tcmd.load_wlan="production"
-    start wlan_prod
-
-# turn on wifi for tcmd load manufacturing firmware
-on property:tcmd.load_wlan="manufacturing"
-    start wlan_mfg
-
-# turn off wifi for tcmd
-on property:tcmd.load_wlan="unload"
-    start wlan_unload
