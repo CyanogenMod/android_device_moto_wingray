@@ -120,15 +120,15 @@ static int boostpulse_open(struct stingray_power_module *stingray) {
         } else {
             if (strncmp(governor, "interactive", 11) == 0)
                 stingray->boostpulse_fd = open(BOOSTPULSE_INTERACTIVE, O_WRONLY);
-			else if (strncmp(governor, "ondemand", 8) == 0)
+            else if (strncmp(governor, "ondemand", 8) == 0)
                 stingray->boostpulse_fd = open(BOOSTPULSE_ONDEMAND, O_WRONLY);
 
-			if (stingray->boostpulse_fd < 0 && !stingray->boostpulse_warned) {
-				strerror_r(errno, buf, sizeof(buf));
-				ALOGE("Error opening %s: %s\n", BOOSTPULSE_INTERACTIVE, buf);
-				stingray->boostpulse_warned = 1;
-			} else if (stingray->boostpulse_fd > 0)
-				ALOGD("Opened %s boostpulse interface", governor);
+            if (stingray->boostpulse_fd < 0 && !stingray->boostpulse_warned) {
+                strerror_r(errno, buf, sizeof(buf));
+                ALOGE("Error opening %s: %s\n", BOOSTPULSE_INTERACTIVE, buf);
+                stingray->boostpulse_warned = 1;
+            } else if (stingray->boostpulse_fd > 0)
+                ALOGD("Opened %s boostpulse interface", governor);
         }
     }
 
