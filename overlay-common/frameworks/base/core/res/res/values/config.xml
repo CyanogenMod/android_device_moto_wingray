@@ -236,6 +236,6 @@
     </string-array>
 
     <!--  Maximum number of supported users -->
-    <integer name="config_multiuserMaximumUsers">5</integer>
+    <integer name="config_multiuserMaximumUsers">1</integer>
 
 </resources>
