@@ -117,6 +117,10 @@ PRODUCT_COPY_FILES += \
     system/extras/bugmailer/bugmailer.sh:system/bin/bugmailer.sh \
     system/extras/bugmailer/send_bug:system/bin/send_bug
 
+# prefer mdpi drawables where available
+PRODUCT_AAPT_CONFIG := normal mdpi hdpi xhdpi
+PRODUCT_AAPT_PREF_CONFIG := mdpi
+
 # inherit from the non-open-source side, if present
 ifneq ($(filter wingray cm_wingray,$(TARGET_PRODUCT)),)
 $(call inherit-product-if-exists, vendor/motorola/wingray/wingray-vendor.mk)
