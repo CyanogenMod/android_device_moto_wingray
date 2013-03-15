@@ -23,10 +23,30 @@
 PRODUCT_PROPERTY_OVERRIDES += \
         ro.carrier=wifi-only
 
-# Inherit from those products. Most specific first.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base.mk)
-# This is where we'd set a backup provider if we had one
-#$(call inherit-product, device/sample/products/backup_overlay.mk)
+# Additional settings used in all AOSP builds
+PRODUCT_PROPERTY_OVERRIDES := \
+    ro.com.android.dateformat=MM-dd-yyyy
+
+# Put en_US first in the list, so make it default.
+PRODUCT_LOCALES := en_US
+
+PRODUCT_PACKAGES := \
+    libfwdlockengine \
+    WAPPushManager
+
+# Get some sounds
+$(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
+
+# Get the TTS language packs
+$(call inherit-product-if-exists, external/svox/pico/lang/all_pico_languages.mk)
+
+# Get a list of languages.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
+
+# Get everything else from the parent package
+$(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
+
+# Device specific
 $(call inherit-product, device/moto/wingray/device.mk)
 
 # Discard inherited values and use our own instead.
