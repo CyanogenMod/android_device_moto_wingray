@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ajustes Xoom</string>
+    <string name="general_title">GENERAL</string>
+    <string name="category_led_title">LEDs</string>
+    <string name="charging_led_title_head">Activar LED en carga</string>
+    <string name="charging_led_summary_head">La carga del dispositivo se indicará con una luz</string>
+</resources>
