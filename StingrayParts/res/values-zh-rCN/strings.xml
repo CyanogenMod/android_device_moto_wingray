@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">高级设置</string>
+    <string name="general_title">常规</string>
+    <string name="category_led_title">LED</string>
+    <string name="charging_led_title_head">启用充电 LED</string>
+    <string name="charging_led_summary_head">使用 LED 指示充电状态</string>
+</resources>
