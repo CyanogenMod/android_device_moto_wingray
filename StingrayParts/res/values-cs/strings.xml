@@ -13,10 +13,12 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
-    <string name="app_name">Ajustes avanzados</string>
-    <string name="general_title">General</string>
-    <string name="category_led_title">LEDs</string>
-    <string name="charging_led_title_head">Activar LED de carga</string>
-    <string name="charging_led_summary_head">La carga del dispositivo se indicará con una luz</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Pokročilé nastavení</string>
+
+    <string name="general_title">Obecné</string>
+
+    <string name="category_led_title">LED</string>
+    <string name="charging_led_title_head">LED při nabíjení</string>
+    <string name="charging_led_summary_head">Nabíjení ukazovat pomocí LED</string>
 </resources>
