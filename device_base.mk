@@ -89,9 +89,12 @@ PRODUCT_PACKAGES := \
     bttest \
     libnetcmdiface \
     com.android.future.usb.accessory \
-    whisperd \
+    whisperd
+
+PRODUCT_PACKAGES := \
     Torch \
     LiveWallpapersPicker \
+    PhotoTable \
     StingrayParts
 
 PRODUCT_CHARACTERISTICS := tablet
