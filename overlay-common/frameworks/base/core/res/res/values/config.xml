@@ -242,4 +242,7 @@
     <!--  Maximum number of supported users -->
     <integer name="config_multiuserMaximumUsers">1</integer>
 
+    <!-- True will enable the electron beam screen-off animation. -->
+    <bool name="config_screenOffAnimation">false</bool>
+
 </resources>
