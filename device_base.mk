@@ -91,7 +91,7 @@ PRODUCT_PACKAGES := \
     com.android.future.usb.accessory \
     whisperd
 
-PRODUCT_PACKAGES := \
+PRODUCT_PACKAGES += \
     Torch \
     LiveWallpapersPicker \
     PhotoTable \
