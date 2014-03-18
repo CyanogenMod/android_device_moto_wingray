@@ -280,6 +280,9 @@ service whisper /system/bin/whisperd
 service sdcard /system/bin/sdcard /data/media /mnt/shell/emulated 1023 1023
     class late_start
 
+on property:vold.decrypt=trigger_restart_framework
+    restart ril-daemon
+
 service motolocation /system/bin/sh /system/bin/am startservice -n com.motorola.android.locationproxy/com.motorola.android.locationproxy.LocationProxyService
     class late_start
     disabled
