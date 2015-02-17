@@ -30,7 +30,7 @@ include frameworks/base/build/tablet-dalvik-heap.mk
 PRODUCT_COPY_FILES += \
     device/moto/wingray/init.stingray.rc:root/init.stingray.rc \
     device/moto/wingray/init.stingray.usb.rc:root/init.stingray.usb.rc \
-    device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc \
+    device/moto/wingray/ueventd.stingray.rc:root/ueventd.stingray.rc
 
 ifneq ($(TARGET_PREBUILT_WIFI_MODULE),)
 PRODUCT_COPY_FILES += \
@@ -101,7 +101,7 @@ PRODUCT_COPY_FILES += \
 
 # Bluetooth config file
 PRODUCT_COPY_FILES += \
-    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf \
+    system/bluetooth/data/main.nonsmartphone.conf:system/etc/bluetooth/main.conf
 
 # for bugreport, with screen capture, and send mail intent
 PRODUCT_PACKAGES += send_bug
